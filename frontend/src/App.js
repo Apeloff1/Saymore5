@@ -1027,6 +1027,15 @@ function App() {
             </div>
           </div>
         )}
+        
+        {/* Expansion Shop Modal */}
+        {showExpansionShop && (
+          <ExpansionShop 
+            onClose={() => setShowExpansionShop(false)}
+            onPurchase={handleExpansionPurchase}
+            purchasedItems={purchasedItems}
+          />
+        )}
       </div>
     );
   }
