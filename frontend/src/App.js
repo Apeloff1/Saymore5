@@ -556,21 +556,20 @@ function App() {
         
         {/* Main Logo Section */}
         <div className={`relative z-20 text-center transition-all duration-1000 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
-          <div className="relative inline-block mb-4">
+          <div className="relative inline-block mb-2">
             <div className="absolute -inset-8 bg-yellow-400/20 blur-3xl rounded-full" />
-            <h1 className="text-6xl md:text-8xl font-bold font-pixel gradient-text logo-glow tracking-wider relative">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-pixel gradient-text logo-glow tracking-wider relative">
               GO FISH!
             </h1>
           </div>
-          <p className="text-blue-300/70 text-sm tracking-[0.3em] uppercase mb-2">Fishing Master 2025</p>
         </div>
         
-        {/* Animated Fish Mascot */}
-        <div className={`my-8 relative z-20 transition-all duration-1000 delay-300 ${menuAnimated ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
+        {/* Animated Fish Mascot - Wiggle animation */}
+        <div className={`my-6 relative z-20 transition-all duration-1000 delay-300 ${menuAnimated ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
           <div className="relative">
             <div className="absolute -inset-8 bg-yellow-400/30 blur-2xl rounded-full animate-pulse" />
-            <div className="animate-fish-swim">
-              <PixelFish color="#FFD700" size={100} />
+            <div className="fish-wiggle">
+              <PixelFish color="#FFD700" size={80} />
             </div>
           </div>
         </div>
