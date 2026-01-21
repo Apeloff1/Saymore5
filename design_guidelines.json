@@ -1,0 +1,113 @@
+{
+  "identity": {
+    "name": "GO FISH!",
+    "tone": "Retro, Vibrant, Relaxing, Juicy",
+    "aesthetic": "16-bit Pixel Art",
+    "target_audience": "Casual mobile gamers"
+  },
+  "typography": {
+    "primary_font": "Press Start 2P",
+    "secondary_font": "VT323",
+    "fallback_font": "monospace",
+    "scale": {
+      "h1": "text-2xl md:text-4xl tracking-tighter leading-none",
+      "h2": "text-xl md:text-3xl tracking-tight",
+      "body": "text-sm md:text-base font-secondary",
+      "caption": "text-xs uppercase tracking-widest"
+    },
+    "import_url": "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+  },
+  "colors": {
+    "palette": {
+      "primary": "#3B82F6",
+      "primary_dark": "#1D4ED8",
+      "secondary": "#F59E0B",
+      "accent": "#EF4444",
+      "neutral": "#1F2937",
+      "background": "#F3F4F6",
+      "white": "#FFFFFF",
+      "black": "#000000"
+    },
+    "themes": {
+      "sunny_lake": {
+        "bg": "bg-sky-300",
+        "water": "bg-blue-500",
+        "accent": "text-yellow-400"
+      },
+      "sunset_river": {
+        "bg": "bg-orange-300",
+        "water": "bg-indigo-600",
+        "accent": "text-red-500"
+      },
+      "deep_ocean": {
+        "bg": "bg-blue-900",
+        "water": "bg-blue-950",
+        "accent": "text-cyan-400"
+      },
+      "storm_sea": {
+        "bg": "bg-slate-700",
+        "water": "bg-slate-900",
+        "accent": "text-purple-400"
+      }
+    }
+  },
+  "ui_components": {
+    "pixel_card": {
+      "base": "bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
+      "hover": "hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-75"
+    },
+    "pixel_button": {
+      "primary": "bg-blue-500 text-white border-2 border-black px-4 py-2 font-primary text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none transition-all",
+      "secondary": "bg-yellow-400 text-black border-2 border-black px-4 py-2 font-primary text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none transition-all",
+      "danger": "bg-red-500 text-white border-2 border-black px-4 py-2 font-primary text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none transition-all"
+    },
+    "modal": {
+      "overlay": "bg-black/50 backdrop-blur-sm",
+      "content": "bg-white border-4 border-black p-6 max-w-md w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+    }
+  },
+  "layout": {
+    "container": "max-w-md mx-auto h-screen overflow-hidden relative bg-slate-100",
+    "safe_area": "px-4 py-6",
+    "grid_system": "grid grid-cols-4 gap-2"
+  },
+  "animations": {
+    "variants": {
+      "fadeIn": {
+        "initial": { "opacity": 0 },
+        "animate": { "opacity": 1 },
+        "exit": { "opacity": 0 }
+      },
+      "slideUp": {
+        "initial": { "y": 20, "opacity": 0 },
+        "animate": { "y": 0, "opacity": 1 }
+      },
+      "pop": {
+        "initial": { "scale": 0.8, "opacity": 0 },
+        "animate": { "scale": 1, "opacity": 1, "transition": { "type": "spring", "stiffness": 300 } }
+      },
+      "fishCatch": {
+        "initial": { "scale": 0, "rotate": -180 },
+        "animate": { "scale": 1.5, "rotate": 0, "transition": { "type": "spring", "damping": 10 } }
+      }
+    }
+  },
+  "assets": {
+    "instructions": "Use SVG components for sprites if images are unavailable. Use 'lucide-react' for UI icons but style them to look chunky/pixelated if possible (e.g. stroke-width-2).",
+    "placeholders": {
+      "fish": "Use a simple SVG path for a fish shape.",
+      "rod": "Use a diagonal line with a hook.",
+      "water": "Use CSS repeating-linear-gradient for waves."
+    }
+  },
+  "universal_guidelines": [
+    "Do not use rounded corners (rounded-none) to maintain pixel art aesthetic.",
+    "Use thick borders (border-2 or border-4) for all containers.",
+    "Shadows should be hard (no blur), simulated with box-shadow or extra divs.",
+    "Text should be legible. Use VT323 for longer text blocks.",
+    "Always provide visual feedback for interactions (button press, screen shake).",
+    "Ensure high contrast for outdoor visibility (mobile usage).",
+    "Use 'data-testid' for all interactive elements."
+  ],
+  "instructions_to_main_agent": "Implement the 'PixelCard' and 'PixelButton' as reusable components first. Replace standard Shadcn components with these custom pixel-styled versions where appropriate (e.g., Dialogs, Cards). Use the 'themes' object to dynamically change the background based on the selected stage."
+}
