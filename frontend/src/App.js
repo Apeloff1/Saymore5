@@ -1361,7 +1361,10 @@ function App() {
               {store.fishingState !== 'idle' && (
                 <>
                   <line x1="35" y1="10" x2="45" y2="0" stroke="#666" strokeWidth="1.5" />
-                  <circle cx="45" cy="0" r="4" fill="#FF4444" stroke="#CC0000" strokeWidth="1" />
+                  {/* Bobber only visible during bite */}
+                  {store.fishingState === 'bite' && (
+                    <circle cx="45" cy="0" r="4" fill="#FF4444" stroke="#CC0000" strokeWidth="1" />
+                  )}
                 </>
               )}
             </svg>
