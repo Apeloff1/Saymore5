@@ -347,6 +347,67 @@ const ExpansionShop = ({ onClose, onPurchase, purchasedItems = {} }) => {
             </div>
           )}
           
+          {/* Difficulty Tab */}
+          {activeTab === 'difficulty' && (
+            <div>
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-bold text-red-400">💪 5 EXTREME DIFFICULTIES</h3>
+                <p className="text-white/60 text-xs">Challenge yourself for bigger rewards!</p>
+              </div>
+              
+              <div className="grid gap-3">
+                {EXPANSION_DIFFICULTIES.map(diff => (
+                  <div
+                    key={diff.id}
+                    className={`rounded-xl p-4 border-2 transition-all ${
+                      diff.unlocked 
+                        ? 'bg-green-900/30 border-green-500/50' 
+                        : `bg-gradient-to-r ${diff.color} bg-opacity-20 border-white/20 hover:border-white/50`
+                    }`}
+                    data-testid={`difficulty-${diff.id}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${diff.color} flex items-center justify-center text-3xl`}>
+                        {diff.icon}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-white text-lg">{diff.name}</h4>
+                        <p className="text-white/60 text-xs mb-2">{diff.desc}</p>
+                        <div className="flex flex-wrap gap-2 text-[9px]">
+                          <span className="bg-red-500/30 px-2 py-0.5 rounded text-red-300">
+                            Tension: {diff.tensionMultiplier}x
+                          </span>
+                          <span className="bg-orange-500/30 px-2 py-0.5 rounded text-orange-300">
+                            Fish Power: {diff.fishStrength}x
+                          </span>
+                          <span className="bg-green-500/30 px-2 py-0.5 rounded text-green-300">
+                            Rewards: {diff.rewardMultiplier}x
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => !diff.unlocked && diff.price > 0 && addToCart(diff, 'difficulty')}
+                        className={`px-4 py-2 rounded-lg font-bold text-sm ${
+                          diff.unlocked 
+                            ? 'bg-green-900/50 text-green-400 cursor-default' 
+                            : diff.price === 0
+                              ? 'bg-green-900/50 text-green-400 cursor-default'
+                              : 'bg-gradient-to-r from-red-500 to-orange-500 text-white hover:from-red-400 hover:to-orange-400'
+                        }`}
+                      >
+                        {diff.unlocked ? '✓ UNLOCKED' : diff.price === 0 ? '✓ FREE' : `$${diff.price}`}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-4 p-4 bg-red-900/20 rounded-xl border border-red-500/30 text-center">
+                <p className="text-red-300 text-sm">⚠️ Higher difficulties = Higher risks + Higher rewards!</p>
+              </div>
+            </div>
+          )}
+          
           {/* Tacklebox Tab */}
           {activeTab === 'tacklebox' && (
             <div>
