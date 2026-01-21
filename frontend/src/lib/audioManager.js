@@ -401,93 +401,153 @@ class EnhancedAudioManager {
     this.playTone(600, 0.03, 'sine', 0.08, this.audioContext.currentTime);
   }
 
-  // ========== NEURON ACTIVATION #69-70: AMBIENT MUSIC ==========
+  // ========== NEURON ACTIVATION #69-70: AMBIENT UPBEAT MUSIC ==========
   startMusic(season = 'summer') {
     this.init();
     if (!this.audioContext || this.currentMusic) return;
     
     this.currentMusic = { playing: true };
     
-    // Create ambient pad based on season
+    // Upbeat tempo configurations by season
     const seasonConfigs = {
-      spring: { baseNote: 261.63, mode: 'major', tempo: 0.8 },
-      summer: { baseNote: 293.66, mode: 'major', tempo: 1.0 },
-      autumn: { baseNote: 220.00, mode: 'minor', tempo: 0.7 },
-      winter: { baseNote: 196.00, mode: 'minor', tempo: 0.5 },
+      spring: { baseNote: 293.66, mode: 'major', tempo: 1.2, energy: 'upbeat' },   // D4 - cheerful
+      summer: { baseNote: 329.63, mode: 'major', tempo: 1.4, energy: 'upbeat' },   // E4 - energetic
+      autumn: { baseNote: 261.63, mode: 'major', tempo: 1.0, energy: 'mellow' },   // C4 - warm
+      winter: { baseNote: 246.94, mode: 'major', tempo: 0.9, energy: 'cozy' },     // B3 - cozy
     };
     
     const config = seasonConfigs[season] || seasonConfigs.summer;
     
-    // Ambient drone
-    this.playAmbientDrone(config);
+    // Start upbeat ambient pad
+    this.playUpbeatAmbient(config);
     
-    // Melodic patterns
-    this.playMelodicLoop(config);
+    // Catchy melodic patterns
+    this.playUpbeatMelody(config);
     
-    // Nature sounds
+    // Rhythmic bass
+    this.playUpbeatBass(config);
+    
+    // Nature ambience
     this.playNatureSounds(season);
   }
 
-  playAmbientDrone(config) {
+  playUpbeatAmbient(config) {
     if (!this.currentMusic?.playing) return;
     
     const now = this.audioContext.currentTime;
     const { baseNote } = config;
     
-    // Root drone
-    const drone = this.audioContext.createOscillator();
-    drone.type = 'sine';
-    drone.frequency.value = baseNote / 2;
+    // Bright chord pad - major triad
+    const chordNotes = [baseNote, baseNote * 1.25, baseNote * 1.5]; // Root, Major 3rd, 5th
     
-    const droneGain = this.audioContext.createGain();
-    droneGain.gain.setValueAtTime(0, now);
-    droneGain.gain.linearRampToValueAtTime(0.08, now + 2);
-    droneGain.gain.setValueAtTime(0.08, now + 8);
-    droneGain.gain.linearRampToValueAtTime(0, now + 10);
+    chordNotes.forEach((freq, i) => {
+      const osc = this.audioContext.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      
+      const gain = this.audioContext.createGain();
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.04, now + 0.5);
+      gain.gain.setValueAtTime(0.04, now + 3.5);
+      gain.gain.linearRampToValueAtTime(0, now + 4);
+      
+      osc.connect(gain);
+      gain.connect(this.musicGain);
+      
+      osc.start(now);
+      osc.stop(now + 4);
+    });
     
-    drone.connect(droneGain);
-    droneGain.connect(this.musicGain);
-    
-    drone.start(now);
-    drone.stop(now + 10);
-    
-    // Loop
+    // Loop with chord progression
     setTimeout(() => {
       if (this.currentMusic?.playing) {
-        this.playAmbientDrone(config);
+        this.playUpbeatAmbient(config);
       }
-    }, 9000);
+    }, 3800);
   }
 
-  playMelodicLoop(config) {
+  playUpbeatMelody(config) {
     if (!this.currentMusic?.playing) return;
     
-    const { baseNote, mode, tempo } = config;
-    const scale = mode === 'major' 
-      ? [1, 1.122, 1.26, 1.335, 1.498, 1.682, 1.888, 2]
-      : [1, 1.122, 1.189, 1.335, 1.498, 1.587, 1.782, 2];
+    const { baseNote, tempo } = config;
     
-    // Random melodic phrase
-    const phraseLength = 4 + Math.floor(Math.random() * 4);
-    const startTime = this.audioContext.currentTime;
+    // Pentatonic scale for catchy melodies (always sounds good)
+    const pentatonic = [1, 1.125, 1.25, 1.5, 1.667, 2]; // Major pentatonic ratios
     
-    for (let i = 0; i < phraseLength; i++) {
-      const scaleIndex = Math.floor(Math.random() * scale.length);
-      const octave = Math.random() > 0.7 ? 2 : 1;
-      const freq = baseNote * scale[scaleIndex] * octave;
-      const duration = (0.5 + Math.random() * 1) / tempo;
-      const delay = i * (0.8 / tempo);
+    const now = this.audioContext.currentTime;
+    const noteCount = 4 + Math.floor(Math.random() * 4);
+    
+    for (let i = 0; i < noteCount; i++) {
+      const scaleIndex = Math.floor(Math.random() * pentatonic.length);
+      const octave = Math.random() > 0.6 ? 2 : 1;
+      const freq = baseNote * pentatonic[scaleIndex] * octave;
+      const duration = (0.2 + Math.random() * 0.3) / tempo;
+      const delay = i * (0.25 / tempo);
       
-      if (Math.random() > 0.3) { // Some rests
-        this.playMusicNote(freq, duration, startTime + delay);
-      }
+      // Brighter, more present melody
+      this.playMelodyNote(freq, duration, now + delay);
     }
     
-    // Loop with variation
-    const loopTime = (phraseLength * 0.8 / tempo + 2) * 1000;
+    // Quick loop for upbeat feel
+    const loopTime = (noteCount * 0.3 / tempo + 1) * 1000;
     setTimeout(() => {
       if (this.currentMusic?.playing) {
-        this.playMelodicLoop(config);
+        this.playUpbeatMelody(config);
+      }
+    }, loopTime);
+  }
+
+  playMelodyNote(freq, duration, startTime) {
+    const osc = this.audioContext.createOscillator();
+    osc.type = 'triangle'; // Brighter than sine
+    osc.frequency.value = freq;
+    
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.08, startTime + 0.03);
+    gain.gain.setValueAtTime(0.06, startTime + duration * 0.7);
+    gain.gain.linearRampToValueAtTime(0, startTime + duration);
+    
+    osc.connect(gain);
+    gain.connect(this.musicGain);
+    
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.1);
+  }
+
+  playUpbeatBass(config) {
+    if (!this.currentMusic?.playing) return;
+    
+    const { baseNote, tempo } = config;
+    const now = this.audioContext.currentTime;
+    
+    // Simple bass pattern - root and fifth
+    const bassNotes = [baseNote / 2, baseNote / 2, baseNote * 0.75, baseNote / 2];
+    const beatDuration = 0.4 / tempo;
+    
+    bassNotes.forEach((freq, i) => {
+      const osc = this.audioContext.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      
+      const gain = this.audioContext.createGain();
+      const startTime = now + i * beatDuration;
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.1, startTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + beatDuration * 0.8);
+      
+      osc.connect(gain);
+      gain.connect(this.musicGain);
+      
+      osc.start(startTime);
+      osc.stop(startTime + beatDuration);
+    });
+    
+    // Loop bass
+    const loopTime = bassNotes.length * beatDuration * 1000;
+    setTimeout(() => {
+      if (this.currentMusic?.playing) {
+        this.playUpbeatBass(config);
       }
     }, loopTime);
   }
