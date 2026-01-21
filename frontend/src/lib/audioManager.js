@@ -1,375 +1,632 @@
-// ========== AMBIENT MUSIC & SOUND EFFECTS ==========
-// Web Audio API based retro sound effects and ambient music
+// ========== ENHANCED AUDIO MANAGER - ADDICTIVE SOUND DESIGN ==========
+// 70 Steps of Neuron Activation through Audio
 
-class AmbientMusicGenerator {
+class EnhancedAudioManager {
   constructor() {
     this.audioContext = null;
-    this.isPlaying = false;
-    this.initialized = false;
     this.masterGain = null;
-    this.ambientGain = null;
-    this.musicNodes = [];
-    this.volume = 0.3;
+    this.musicGain = null;
+    this.sfxGain = null;
+    this.currentMusic = null;
+    this.volume = 0.5;
+    this.musicVolume = 0.3;
+    this.sfxVolume = 0.7;
+    this.initialized = false;
+    this.comboMultiplier = 1;
+    
+    // Preloaded oscillator pools for instant response
+    this.oscillatorPool = [];
   }
 
   init() {
-    if (this.initialized) return true;
+    if (this.initialized) return;
     try {
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      this.masterGain = this.audioContext.createGain();
-      this.masterGain.connect(this.audioContext.destination);
-      this.masterGain.gain.value = this.volume;
       
-      this.ambientGain = this.audioContext.createGain();
-      this.ambientGain.connect(this.masterGain);
-      this.ambientGain.gain.value = 0.4;
+      // Master gain
+      this.masterGain = this.audioContext.createGain();
+      this.masterGain.gain.value = this.volume;
+      this.masterGain.connect(this.audioContext.destination);
+      
+      // Music channel
+      this.musicGain = this.audioContext.createGain();
+      this.musicGain.gain.value = this.musicVolume;
+      this.musicGain.connect(this.masterGain);
+      
+      // SFX channel
+      this.sfxGain = this.audioContext.createGain();
+      this.sfxGain.gain.value = this.sfxVolume;
+      this.sfxGain.connect(this.masterGain);
+      
+      // Compressor for punchy sound
+      this.compressor = this.audioContext.createDynamicsCompressor();
+      this.compressor.threshold.value = -24;
+      this.compressor.knee.value = 30;
+      this.compressor.ratio.value = 12;
+      this.compressor.attack.value = 0.003;
+      this.compressor.release.value = 0.25;
+      this.sfxGain.connect(this.compressor);
+      this.compressor.connect(this.masterGain);
       
       this.initialized = true;
-      return true;
     } catch (e) {
-      console.log('Web Audio API not supported');
-      return false;
+      console.warn('Audio not supported');
     }
   }
 
   setVolume(vol) {
     this.volume = Math.max(0, Math.min(1, vol));
     if (this.masterGain) {
-      this.masterGain.gain.value = this.volume;
+      this.masterGain.gain.setTargetAtTime(this.volume, this.audioContext.currentTime, 0.1);
     }
   }
 
-  // ========== AMBIENT MUSIC BY SEASON ==========
-  
-  startAmbientMusic(season = 'summer') {
-    if (!this.init() || this.isPlaying) return;
-    this.isPlaying = true;
-    
-    // Different ambient patterns per season
-    const patterns = {
-      spring: {
-        notes: [523, 587, 659, 698, 784, 698, 659, 587], // C5 major scale
-        tempo: 0.4,
-        waveType: 'sine',
-      },
-      summer: {
-        notes: [392, 440, 494, 523, 587, 523, 494, 440], // G4 major
-        tempo: 0.35,
-        waveType: 'triangle',
-      },
-      autumn: {
-        notes: [349, 392, 440, 466, 523, 466, 440, 392], // F4 minor feel
-        tempo: 0.45,
-        waveType: 'sine',
-      },
-      winter: {
-        notes: [262, 294, 330, 349, 392, 349, 330, 294], // C4 gentle
-        tempo: 0.5,
-        waveType: 'sine',
-      },
-    };
-    
-    const pattern = patterns[season] || patterns.summer;
-    this.playAmbientLoop(pattern);
-    this.playWaterAmbient();
-    this.playBirdAmbient(season);
-  }
-
-  playAmbientLoop(pattern) {
-    if (!this.isPlaying || !this.audioContext) return;
-    
-    let noteIndex = 0;
-    const playNote = () => {
-      if (!this.isPlaying) return;
-      
-      const osc = this.audioContext.createOscillator();
-      const gain = this.audioContext.createGain();
-      
-      osc.connect(gain);
-      gain.connect(this.ambientGain);
-      
-      osc.type = pattern.waveType;
-      osc.frequency.value = pattern.notes[noteIndex];
-      
-      const now = this.audioContext.currentTime;
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.08, now + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + pattern.tempo);
-      
-      osc.start(now);
-      osc.stop(now + pattern.tempo);
-      
-      this.musicNodes.push({ osc, gain });
-      
-      noteIndex = (noteIndex + 1) % pattern.notes.length;
-      setTimeout(playNote, pattern.tempo * 1000);
-    };
-    
-    playNote();
-  }
-
-  playWaterAmbient() {
-    if (!this.isPlaying || !this.audioContext) return;
-    
-    // Create water/wave sounds using noise
-    const bufferSize = this.audioContext.sampleRate * 2;
-    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    
-    // Generate filtered noise for water
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * 0.5;
+  setMusicVolume(vol) {
+    this.musicVolume = Math.max(0, Math.min(1, vol));
+    if (this.musicGain) {
+      this.musicGain.gain.setTargetAtTime(this.musicVolume, this.audioContext.currentTime, 0.1);
     }
+  }
+
+  setSfxVolume(vol) {
+    this.sfxVolume = Math.max(0, Math.min(1, vol));
+    if (this.sfxGain) {
+      this.sfxGain.gain.setTargetAtTime(this.sfxVolume, this.audioContext.currentTime, 0.1);
+    }
+  }
+
+  // ========== NEURON ACTIVATION SOUND #1-5: SATISFYING CAST ==========
+  cast() {
+    this.init();
+    if (!this.audioContext) return;
     
-    const noise = this.audioContext.createBufferSource();
-    noise.buffer = buffer;
-    noise.loop = true;
+    const now = this.audioContext.currentTime;
     
-    // Low pass filter for water sound
+    // Whoosh sound - satisfying air movement
+    const noise = this.createNoise(0.15);
+    const noiseFilter = this.audioContext.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.setValueAtTime(2000, now);
+    noiseFilter.frequency.exponentialRampToValueAtTime(500, now + 0.15);
+    noiseFilter.Q.value = 1;
+    
+    const noiseGain = this.audioContext.createGain();
+    noiseGain.gain.setValueAtTime(0.3, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+    
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(this.sfxGain);
+    
+    // Line release click
+    this.playTone(1200, 0.02, 'sine', 0.2, now);
+    this.playTone(800, 0.03, 'sine', 0.15, now + 0.01);
+    
+    // Reel spin
+    for (let i = 0; i < 5; i++) {
+      this.playTone(400 + i * 50, 0.02, 'square', 0.05, now + 0.02 + i * 0.015);
+    }
+  }
+
+  // ========== NEURON ACTIVATION #6-10: IMMERSIVE SPLASH ==========
+  splash() {
+    this.init();
+    if (!this.audioContext) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Water impact - satisfying plop
+    const noise = this.createNoise(0.3);
     const filter = this.audioContext.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = 400;
-    filter.Q.value = 1;
+    filter.frequency.setValueAtTime(3000, now);
+    filter.frequency.exponentialRampToValueAtTime(200, now + 0.25);
     
-    const waterGain = this.audioContext.createGain();
-    waterGain.gain.value = 0.03;
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
     
     noise.connect(filter);
-    filter.connect(waterGain);
-    waterGain.connect(this.ambientGain);
+    filter.connect(gain);
+    gain.connect(this.sfxGain);
     
-    noise.start();
-    this.musicNodes.push({ source: noise, filter, gain: waterGain });
+    // Bubble sounds
+    for (let i = 0; i < 3; i++) {
+      const bubbleFreq = 600 + Math.random() * 400;
+      this.playTone(bubbleFreq, 0.08, 'sine', 0.1, now + 0.1 + i * 0.05);
+    }
     
-    // Modulate water sound
-    const modulateWater = () => {
-      if (!this.isPlaying) return;
-      const mod = 0.02 + Math.sin(Date.now() * 0.001) * 0.01;
-      waterGain.gain.value = mod;
-      setTimeout(modulateWater, 100);
-    };
-    modulateWater();
+    // Sub-bass impact for weight
+    this.playTone(60, 0.15, 'sine', 0.3, now);
   }
 
-  playBirdAmbient(season) {
-    if (!this.isPlaying || !this.audioContext) return;
-    if (season === 'winter') return; // No birds in winter
+  // ========== NEURON ACTIVATION #11-20: EXCITING BITE ==========
+  bite() {
+    this.init();
+    if (!this.audioContext) return;
     
-    const chirp = () => {
-      if (!this.isPlaying) return;
-      
-      const osc = this.audioContext.createOscillator();
-      const gain = this.audioContext.createGain();
-      
-      osc.connect(gain);
-      gain.connect(this.ambientGain);
-      
-      osc.type = 'sine';
-      const baseFreq = 1800 + Math.random() * 800;
-      
-      const now = this.audioContext.currentTime;
-      osc.frequency.setValueAtTime(baseFreq, now);
-      osc.frequency.linearRampToValueAtTime(baseFreq * 1.2, now + 0.05);
-      osc.frequency.linearRampToValueAtTime(baseFreq * 0.9, now + 0.1);
-      osc.frequency.linearRampToValueAtTime(baseFreq * 1.1, now + 0.15);
-      
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.02, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      
-      osc.start(now);
-      osc.stop(now + 0.2);
-      
-      // Random interval for next chirp
-      const nextChirp = 3000 + Math.random() * 8000;
-      setTimeout(chirp, nextChirp);
-    };
+    const now = this.audioContext.currentTime;
     
-    // Start birds after a random delay
-    setTimeout(chirp, 2000 + Math.random() * 3000);
-  }
-
-  stopAmbientMusic() {
-    this.isPlaying = false;
-    
-    // Fade out and stop all nodes
-    this.musicNodes.forEach(node => {
-      try {
-        if (node.gain) {
-          node.gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.5);
-        }
-        if (node.osc) node.osc.stop(this.audioContext.currentTime + 0.5);
-        if (node.source) node.source.stop(this.audioContext.currentTime + 0.5);
-      } catch (e) {}
+    // Urgent alert tone - triggers attention
+    const frequencies = [880, 1100, 880, 1100];
+    frequencies.forEach((freq, i) => {
+      this.playTone(freq, 0.08, 'square', 0.25, now + i * 0.1);
     });
     
-    this.musicNodes = [];
-  }
-
-  // ========== SOUND EFFECTS ==========
-
-  playBeep(frequency = 440, duration = 0.1, type = 'square') {
-    if (!this.init()) return;
-    
+    // Tension building sub
     const osc = this.audioContext.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(80, now);
+    osc.frequency.linearRampToValueAtTime(120, now + 0.4);
+    
     const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.setValueAtTime(0.3, now + 0.35);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
     
     osc.connect(gain);
-    gain.connect(this.masterGain);
+    gain.connect(this.sfxGain);
+    osc.start(now);
+    osc.stop(now + 0.5);
     
+    // Vibration pattern for haptic sync
+    if (navigator.vibrate) {
+      navigator.vibrate([50, 30, 50, 30, 100]);
+    }
+  }
+
+  // ========== NEURON ACTIVATION #21-35: DOPAMINE CATCH ==========
+  catch() {
+    this.init();
+    if (!this.audioContext) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Victory fanfare - major chord arpeggio
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    notes.forEach((freq, i) => {
+      this.playTone(freq, 0.2, 'sine', 0.3, now + i * 0.08);
+      // Add harmonics for richness
+      this.playTone(freq * 2, 0.15, 'sine', 0.1, now + i * 0.08);
+    });
+    
+    // Coin/reward sound
+    this.playTone(1800, 0.05, 'sine', 0.2, now + 0.35);
+    this.playTone(2200, 0.1, 'sine', 0.25, now + 0.4);
+    
+    // Satisfying pop
+    const noise = this.createNoise(0.05);
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 2000;
+    
+    const popGain = this.audioContext.createGain();
+    popGain.gain.setValueAtTime(0.3, now + 0.3);
+    popGain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+    
+    noise.connect(filter);
+    filter.connect(popGain);
+    popGain.connect(this.sfxGain);
+    
+    // Haptic success
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 200]);
+    }
+  }
+
+  // ========== NEURON ACTIVATION #36-45: PERFECT CATCH EUPHORIA ==========
+  perfect() {
+    this.init();
+    if (!this.audioContext) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Magical shimmer
+    for (let i = 0; i < 8; i++) {
+      const freq = 1000 + i * 200 + Math.random() * 100;
+      this.playTone(freq, 0.3 - i * 0.03, 'sine', 0.15, now + i * 0.04);
+    }
+    
+    // Power chord
+    this.playTone(261.63, 0.4, 'sawtooth', 0.2, now); // C4
+    this.playTone(329.63, 0.4, 'sawtooth', 0.15, now); // E4
+    this.playTone(392.00, 0.4, 'sawtooth', 0.15, now); // G4
+    
+    // Rising sweep
+    const osc = this.audioContext.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.exponentialRampToValueAtTime(2000, now + 0.5);
+    
+    const sweepGain = this.audioContext.createGain();
+    sweepGain.gain.setValueAtTime(0.2, now);
+    sweepGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+    
+    osc.connect(sweepGain);
+    sweepGain.connect(this.sfxGain);
+    osc.start(now);
+    osc.stop(now + 0.5);
+    
+    // Star sparkle
+    setTimeout(() => {
+      for (let i = 0; i < 5; i++) {
+        this.playTone(2000 + Math.random() * 1000, 0.05, 'sine', 0.1, this.audioContext.currentTime + i * 0.06);
+      }
+    }, 200);
+    
+    // Strong haptic
+    if (navigator.vibrate) {
+      navigator.vibrate([50, 50, 100, 50, 200]);
+    }
+  }
+
+  // ========== NEURON ACTIVATION #46-50: LEVEL UP RUSH ==========
+  levelUp() {
+    this.init();
+    if (!this.audioContext) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Epic ascending scale
+    const scale = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
+    scale.forEach((freq, i) => {
+      this.playTone(freq, 0.15, 'sine', 0.25 - i * 0.02, now + i * 0.07);
+      this.playTone(freq * 1.5, 0.12, 'sine', 0.1, now + i * 0.07);
+    });
+    
+    // Triumphant chord
+    setTimeout(() => {
+      const t = this.audioContext.currentTime;
+      this.playTone(523.25, 0.6, 'sine', 0.3, t); // C5
+      this.playTone(659.25, 0.6, 'sine', 0.25, t); // E5
+      this.playTone(783.99, 0.6, 'sine', 0.25, t); // G5
+      this.playTone(1046.50, 0.6, 'sine', 0.2, t); // C6
+    }, 560);
+    
+    // Cymbal crash
+    const noise = this.createNoise(0.8);
+    const crashFilter = this.audioContext.createBiquadFilter();
+    crashFilter.type = 'highpass';
+    crashFilter.frequency.value = 3000;
+    
+    const crashGain = this.audioContext.createGain();
+    crashGain.gain.setValueAtTime(0.2, now + 0.56);
+    crashGain.gain.exponentialRampToValueAtTime(0.01, now + 1.3);
+    
+    noise.connect(crashFilter);
+    crashFilter.connect(crashGain);
+    crashGain.connect(this.sfxGain);
+    
+    // Long haptic celebration
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 30, 100, 30, 100, 30, 300]);
+    }
+  }
+
+  // ========== NEURON ACTIVATION #51-55: ACHIEVEMENT UNLOCK ==========
+  achievement() {
+    this.init();
+    if (!this.audioContext) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Treasure chest open
+    this.playTone(400, 0.1, 'sine', 0.3, now);
+    this.playTone(500, 0.1, 'sine', 0.3, now + 0.1);
+    this.playTone(600, 0.1, 'sine', 0.3, now + 0.2);
+    
+    // Magical reveal
+    for (let i = 0; i < 6; i++) {
+      this.playTone(800 + i * 150, 0.2, 'sine', 0.2 - i * 0.02, now + 0.3 + i * 0.05);
+    }
+    
+    // Golden shimmer
+    setTimeout(() => {
+      for (let i = 0; i < 10; i++) {
+        const t = this.audioContext.currentTime;
+        this.playTone(1500 + Math.random() * 1500, 0.08, 'sine', 0.1, t + i * 0.03);
+      }
+    }, 500);
+    
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 400]);
+    }
+  }
+
+  // ========== NEURON ACTIVATION #56-60: COMBO BUILDING ==========
+  combo(multiplier) {
+    this.init();
+    if (!this.audioContext) return;
+    
+    this.comboMultiplier = multiplier;
+    const now = this.audioContext.currentTime;
+    
+    // Rising pitch with combo
+    const baseFreq = 400 + (multiplier - 1) * 100;
+    this.playTone(baseFreq, 0.1, 'sine', 0.2, now);
+    this.playTone(baseFreq * 1.25, 0.08, 'sine', 0.15, now + 0.05);
+    
+    // Intensity increases with combo
+    if (multiplier >= 3) {
+      this.playTone(baseFreq * 1.5, 0.08, 'sine', 0.15, now + 0.1);
+    }
+    if (multiplier >= 5) {
+      // Fire mode!
+      this.playTone(baseFreq * 2, 0.1, 'sawtooth', 0.1, now + 0.15);
+    }
+    
+    // Quick haptic
+    if (navigator.vibrate) {
+      navigator.vibrate(20 + multiplier * 10);
+    }
+  }
+
+  // ========== NEURON ACTIVATION #61-65: MISS/FAIL (Motivating) ==========
+  miss() {
+    this.init();
+    if (!this.audioContext) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Descending "aww" - not too punishing
+    this.playTone(400, 0.15, 'sine', 0.2, now);
+    this.playTone(350, 0.15, 'sine', 0.2, now + 0.1);
+    this.playTone(300, 0.2, 'sine', 0.15, now + 0.2);
+    
+    // Soft thud
+    this.playTone(80, 0.1, 'sine', 0.2, now);
+    
+    // Quick sad haptic
+    if (navigator.vibrate) {
+      navigator.vibrate([30, 50, 30]);
+    }
+  }
+
+  // ========== NEURON ACTIVATION #66-68: UI SOUNDS ==========
+  select() {
+    this.init();
+    if (!this.audioContext) return;
+    
+    const now = this.audioContext.currentTime;
+    this.playTone(800, 0.05, 'sine', 0.15, now);
+    this.playTone(1000, 0.05, 'sine', 0.1, now + 0.02);
+    
+    if (navigator.vibrate) navigator.vibrate(10);
+  }
+
+  hover() {
+    this.init();
+    if (!this.audioContext) return;
+    
+    this.playTone(600, 0.03, 'sine', 0.08, this.audioContext.currentTime);
+  }
+
+  // ========== NEURON ACTIVATION #69-70: AMBIENT MUSIC ==========
+  startMusic(season = 'summer') {
+    this.init();
+    if (!this.audioContext || this.currentMusic) return;
+    
+    this.currentMusic = { playing: true };
+    
+    // Create ambient pad based on season
+    const seasonConfigs = {
+      spring: { baseNote: 261.63, mode: 'major', tempo: 0.8 },
+      summer: { baseNote: 293.66, mode: 'major', tempo: 1.0 },
+      autumn: { baseNote: 220.00, mode: 'minor', tempo: 0.7 },
+      winter: { baseNote: 196.00, mode: 'minor', tempo: 0.5 },
+    };
+    
+    const config = seasonConfigs[season] || seasonConfigs.summer;
+    
+    // Ambient drone
+    this.playAmbientDrone(config);
+    
+    // Melodic patterns
+    this.playMelodicLoop(config);
+    
+    // Nature sounds
+    this.playNatureSounds(season);
+  }
+
+  playAmbientDrone(config) {
+    if (!this.currentMusic?.playing) return;
+    
+    const now = this.audioContext.currentTime;
+    const { baseNote } = config;
+    
+    // Root drone
+    const drone = this.audioContext.createOscillator();
+    drone.type = 'sine';
+    drone.frequency.value = baseNote / 2;
+    
+    const droneGain = this.audioContext.createGain();
+    droneGain.gain.setValueAtTime(0, now);
+    droneGain.gain.linearRampToValueAtTime(0.08, now + 2);
+    droneGain.gain.setValueAtTime(0.08, now + 8);
+    droneGain.gain.linearRampToValueAtTime(0, now + 10);
+    
+    drone.connect(droneGain);
+    droneGain.connect(this.musicGain);
+    
+    drone.start(now);
+    drone.stop(now + 10);
+    
+    // Loop
+    setTimeout(() => {
+      if (this.currentMusic?.playing) {
+        this.playAmbientDrone(config);
+      }
+    }, 9000);
+  }
+
+  playMelodicLoop(config) {
+    if (!this.currentMusic?.playing) return;
+    
+    const { baseNote, mode, tempo } = config;
+    const scale = mode === 'major' 
+      ? [1, 1.122, 1.26, 1.335, 1.498, 1.682, 1.888, 2]
+      : [1, 1.122, 1.189, 1.335, 1.498, 1.587, 1.782, 2];
+    
+    // Random melodic phrase
+    const phraseLength = 4 + Math.floor(Math.random() * 4);
+    const startTime = this.audioContext.currentTime;
+    
+    for (let i = 0; i < phraseLength; i++) {
+      const scaleIndex = Math.floor(Math.random() * scale.length);
+      const octave = Math.random() > 0.7 ? 2 : 1;
+      const freq = baseNote * scale[scaleIndex] * octave;
+      const duration = (0.5 + Math.random() * 1) / tempo;
+      const delay = i * (0.8 / tempo);
+      
+      if (Math.random() > 0.3) { // Some rests
+        this.playMusicNote(freq, duration, startTime + delay);
+      }
+    }
+    
+    // Loop with variation
+    const loopTime = (phraseLength * 0.8 / tempo + 2) * 1000;
+    setTimeout(() => {
+      if (this.currentMusic?.playing) {
+        this.playMelodicLoop(config);
+      }
+    }, loopTime);
+  }
+
+  playMusicNote(freq, duration, startTime) {
+    const osc = this.audioContext.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.06, startTime + 0.1);
+    gain.gain.setValueAtTime(0.06, startTime + duration - 0.2);
+    gain.gain.linearRampToValueAtTime(0, startTime + duration);
+    
+    // Add reverb-like effect
+    const delay = this.audioContext.createDelay();
+    delay.delayTime.value = 0.3;
+    const delayGain = this.audioContext.createGain();
+    delayGain.gain.value = 0.3;
+    
+    osc.connect(gain);
+    gain.connect(this.musicGain);
+    gain.connect(delay);
+    delay.connect(delayGain);
+    delayGain.connect(this.musicGain);
+    
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.5);
+  }
+
+  playNatureSounds(season) {
+    if (!this.currentMusic?.playing) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Water lapping
+    if (Math.random() > 0.5) {
+      const noise = this.createNoise(1.5);
+      const filter = this.audioContext.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(400, now);
+      filter.frequency.linearRampToValueAtTime(200, now + 1.5);
+      
+      const gain = this.audioContext.createGain();
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.03, now + 0.3);
+      gain.gain.linearRampToValueAtTime(0.03, now + 1.2);
+      gain.gain.linearRampToValueAtTime(0, now + 1.5);
+      
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.musicGain);
+    }
+    
+    // Bird chirp (spring/summer)
+    if ((season === 'spring' || season === 'summer') && Math.random() > 0.7) {
+      const chirpTime = now + Math.random() * 2;
+      for (let i = 0; i < 3; i++) {
+        const freq = 2000 + Math.random() * 1500;
+        this.playTone(freq, 0.05, 'sine', 0.04, chirpTime + i * 0.08);
+      }
+    }
+    
+    // Wind (autumn/winter)
+    if ((season === 'autumn' || season === 'winter') && Math.random() > 0.6) {
+      const noise = this.createNoise(3);
+      const filter = this.audioContext.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(300, now);
+      filter.frequency.linearRampToValueAtTime(500, now + 1.5);
+      filter.frequency.linearRampToValueAtTime(300, now + 3);
+      filter.Q.value = 2;
+      
+      const gain = this.audioContext.createGain();
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.02, now + 0.5);
+      gain.gain.linearRampToValueAtTime(0.02, now + 2.5);
+      gain.gain.linearRampToValueAtTime(0, now + 3);
+      
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.musicGain);
+    }
+    
+    // Loop nature sounds
+    setTimeout(() => {
+      if (this.currentMusic?.playing) {
+        this.playNatureSounds(season);
+      }
+    }, 2000 + Math.random() * 3000);
+  }
+
+  stopMusic() {
+    if (this.currentMusic) {
+      this.currentMusic.playing = false;
+      this.currentMusic = null;
+    }
+  }
+
+  // ========== HELPER FUNCTIONS ==========
+  playTone(frequency, duration, type = 'sine', volume = 0.2, startTime = null) {
+    if (!this.audioContext) return;
+    
+    const now = startTime || this.audioContext.currentTime;
+    
+    const osc = this.audioContext.createOscillator();
     osc.type = type;
     osc.frequency.value = frequency;
     
-    const now = this.audioContext.currentTime;
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(volume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    
+    osc.connect(gain);
+    gain.connect(this.sfxGain);
     
     osc.start(now);
     osc.stop(now + duration);
   }
 
-  playCast() {
-    if (!this.init()) return;
-    
-    // Whoosh sound
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    const filter = this.audioContext.createBiquadFilter();
-    
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.masterGain);
-    
-    osc.type = 'sawtooth';
-    filter.type = 'lowpass';
-    
-    const now = this.audioContext.currentTime;
-    osc.frequency.setValueAtTime(150, now);
-    osc.frequency.exponentialRampToValueAtTime(400, now + 0.2);
-    osc.frequency.exponentialRampToValueAtTime(100, now + 0.4);
-    
-    filter.frequency.setValueAtTime(800, now);
-    filter.frequency.linearRampToValueAtTime(2000, now + 0.2);
-    filter.frequency.linearRampToValueAtTime(400, now + 0.4);
-    
-    gain.gain.setValueAtTime(0.15, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-    
-    osc.start(now);
-    osc.stop(now + 0.4);
-  }
-
-  playBite() {
-    // Alert beeps
-    [0, 100, 200].forEach((delay, i) => {
-      setTimeout(() => this.playBeep(800 + i * 100, 0.08, 'square'), delay);
-    });
-  }
-
-  playCatch() {
-    // Victory arpeggio
-    const notes = [523, 659, 784, 1047];
-    notes.forEach((freq, i) => {
-      setTimeout(() => this.playBeep(freq, 0.15, 'square'), i * 80);
-    });
-  }
-
-  playMiss() {
-    if (!this.init()) return;
-    
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    
-    osc.type = 'sawtooth';
-    
-    const now = this.audioContext.currentTime;
-    osc.frequency.setValueAtTime(400, now);
-    osc.frequency.exponentialRampToValueAtTime(150, now + 0.4);
-    
-    gain.gain.setValueAtTime(0.15, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-    
-    osc.start(now);
-    osc.stop(now + 0.4);
-  }
-
-  playSelect() {
-    this.playBeep(600, 0.08, 'square');
-  }
-
-  playLevelUp() {
-    const notes = [523, 659, 784, 880, 1047];
-    notes.forEach((freq, i) => {
-      setTimeout(() => this.playBeep(freq, 0.18, 'square'), i * 100);
-    });
-  }
-
-  playPerfect() {
-    const notes = [784, 988, 1175, 1319];
-    notes.forEach((freq, i) => {
-      setTimeout(() => this.playBeep(freq, 0.1, 'triangle'), i * 60);
-    });
-  }
-
-  playAchievement() {
-    const notes = [523, 659, 784, 1047, 1319, 1568];
-    notes.forEach((freq, i) => {
-      setTimeout(() => this.playBeep(freq, 0.12, 'square'), i * 80);
-    });
-  }
-
-  playSplash() {
-    if (!this.init()) return;
-    
-    // Create noise burst for splash
-    const bufferSize = this.audioContext.sampleRate * 0.3;
+  createNoise(duration) {
+    const bufferSize = this.audioContext.sampleRate * duration;
     const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
     const data = buffer.getChannelData(0);
     
     for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+      data[i] = Math.random() * 2 - 1;
     }
     
     const noise = this.audioContext.createBufferSource();
     noise.buffer = buffer;
+    noise.start(this.audioContext.currentTime);
     
-    const filter = this.audioContext.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = 1000;
-    filter.Q.value = 0.5;
-    
-    const gain = this.audioContext.createGain();
-    gain.gain.value = 0.15;
-    
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.masterGain);
-    
-    noise.start();
+    return noise;
   }
 }
 
-// Singleton instance
-export const ambientMusic = new AmbientMusicGenerator();
+// Export singleton
+export const retroSounds = new EnhancedAudioManager();
 
-// Legacy API compatibility
-export const retroSounds = {
-  cast: () => ambientMusic.playCast(),
-  bite: () => ambientMusic.playBite(),
-  catch: () => ambientMusic.playCatch(),
-  miss: () => ambientMusic.playMiss(),
-  select: () => ambientMusic.playSelect(),
-  levelUp: () => ambientMusic.playLevelUp(),
-  perfect: () => ambientMusic.playPerfect(),
-  achievement: () => ambientMusic.playAchievement(),
-  splash: () => ambientMusic.playSplash(),
-  beep: (freq) => ambientMusic.playBeep(freq),
-  startMusic: (season) => ambientMusic.startAmbientMusic(season),
-  stopMusic: () => ambientMusic.stopAmbientMusic(),
-  setVolume: (vol) => ambientMusic.setVolume(vol),
-};
-
-export default ambientMusic;
+export default retroSounds;
