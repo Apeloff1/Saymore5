@@ -109,3 +109,23 @@ A retro-styled fishing game with pixel art aesthetics, seasonal themes, and enga
 
 ---
 Last Updated: January 2026
+
+## Update (Jan 2026) - Bobber Visibility Fix
+
+### Changes Made:
+1. **Red/white bobber target completely hidden during waiting state**
+   - Changed render condition from `(waiting || bite)` to only `(bite)`
+   - Bobber now invisible during casting and waiting phases
+   
+2. **Rod indicator hidden during waiting**
+   - Small red circle on rod display now only shows during bite state
+   
+3. **Font sizes reduced further**
+   - Cast button: 8-10px
+   - Reel button: 7-9px
+
+### Test Results:
+- Bobber visibility during waiting: ✅ HIDDEN (100% pass rate)
+- Bobber visibility during bite: ✅ VISIBLE (intentional)
+- Button fonts fit inside buttons: ✅ PASS
+- Game functionality: ✅ WORKING
