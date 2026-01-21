@@ -575,33 +575,33 @@ function App() {
         </div>
         
         {/* Menu Buttons */}
-        <div className={`space-y-4 w-72 relative z-20 transition-all duration-1000 delay-500 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`space-y-3 w-64 md:w-72 relative z-20 transition-all duration-1000 delay-500 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <button 
             onClick={() => { retroSounds.select(); store.setGameState('stage_select'); }}
-            className="menu-btn-primary w-full h-16 rounded-2xl font-bold text-xl text-white tracking-wide flex items-center justify-center gap-3 group"
+            className="menu-btn-primary w-full h-14 rounded-2xl font-bold text-lg text-white tracking-wide flex items-center justify-center gap-3 group"
             data-testid="start-button"
           >
-            <span className="text-2xl group-hover:scale-125 transition-transform">▶</span>
+            <span className="text-xl group-hover:scale-125 transition-transform">▶</span>
             <span>PLAY</span>
           </button>
           
           <button 
             onClick={() => { retroSounds.select(); loadLeaderboard(); setShowLeaderboard(true); }}
-            className="menu-btn-secondary w-full h-14 rounded-2xl font-bold text-white flex items-center justify-center gap-3"
+            className="menu-btn-secondary w-full h-12 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2"
             data-testid="leaderboard-button"
           >
-            <span className="text-xl">🏆</span>
+            <span className="text-lg">🏆</span>
             <span>LEADERBOARD</span>
           </button>
           
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <button 
               onClick={() => { retroSounds.select(); setShowAchievements(true); }}
-              className="menu-btn-accent flex-1 h-14 rounded-2xl font-bold text-white flex items-center justify-center gap-2"
+              className="menu-btn-accent flex-1 h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2"
               data-testid="achievements-button"
             >
               <span>⭐</span>
-              <span className="text-sm">BADGES</span>
+              <span className="text-xs">BADGES</span>
             </button>
             
             <button 
