@@ -12,6 +12,7 @@ import {
   PixelFish,
   PixelBobber,
   WaterSplash,
+  WaterRipple,
   ParticleEffects,
   WhaleSprite,
   FlyingSeagulls,
