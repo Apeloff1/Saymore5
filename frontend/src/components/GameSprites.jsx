@@ -946,24 +946,34 @@ export const RetroBackground = ({ stage, timeOfDay, showRain, showLightning, sea
       {/* Seasonal particles */}
       <SeasonalParticles season={currentSeason} count={currentSeason === 'winter' ? 35 : 18} />
 
-      {/* Rain */}
+      {/* Rain - Enhanced visibility */}
       {showRain && (
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {rainDrops.map((drop) => (
             <div
               key={drop.id}
-              className="absolute bg-gradient-to-b from-blue-300 to-blue-400"
+              className="absolute"
               style={{
                 left: `${drop.x}%`,
                 top: `${drop.y}%`,
-                width: 2,
+                width: 3,
                 height: drop.length,
-                transform: 'rotate(15deg)',
-                opacity: drop.opacity,
-                borderRadius: '1px',
+                background: 'linear-gradient(180deg, rgba(180, 200, 255, 0.9) 0%, rgba(100, 150, 220, 0.4) 100%)',
+                transform: 'rotate(20deg)',
+                opacity: drop.opacity + 0.2,
+                borderRadius: '2px',
+                boxShadow: '0 0 4px rgba(180, 200, 255, 0.4)',
               }}
             />
           ))}
+          {/* Rain mist overlay */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(180deg, rgba(100, 130, 180, 0.1) 0%, rgba(100, 130, 180, 0.25) 100%)',
+              pointerEvents: 'none',
+            }}
+          />
         </div>
       )}
 
