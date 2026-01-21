@@ -506,20 +506,19 @@ function App() {
         <AnimatedWaves color="#1a3a5c" />
         
         <div className="text-center animate-fade-in relative z-20">
-          <div className="relative mb-8">
-            <div className="text-8xl mb-4 animate-float">🎣</div>
+          <div className="relative mb-6">
+            <div className="text-6xl md:text-7xl mb-4 animate-float">🎣</div>
             <div className="absolute -inset-4 bg-yellow-400/20 blur-3xl rounded-full animate-pulse" />
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold font-pixel gradient-text logo-glow tracking-wider mb-2">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-pixel gradient-text logo-glow tracking-wider mb-6">
             GO FISH!
           </h1>
-          <p className="text-blue-300/80 text-lg mb-8 tracking-widest uppercase">Fishing Master 2025</p>
           
-          <div className="w-64 h-3 bg-black/40 rounded-full mx-auto overflow-hidden border-2 border-white/20">
+          <div className="w-56 md:w-64 h-2.5 bg-black/40 rounded-full mx-auto overflow-hidden border-2 border-white/20">
             <div className="h-full bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 rounded-full animate-loading-bar" />
           </div>
-          <p className="text-white/60 mt-4 text-sm animate-pulse">Loading adventure...</p>
+          <p className="text-white/60 mt-4 text-xs md:text-sm animate-pulse">Loading...</p>
         </div>
       </div>
     );
