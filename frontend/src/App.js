@@ -1313,6 +1313,15 @@ function App() {
           </div>
         )}
         
+        {/* Water Ripple Effect - Shows where line enters water */}
+        {(store.fishingState === 'waiting' || store.fishingState === 'bite') && (
+          <WaterRipple 
+            x={window.innerWidth / 2} 
+            y={window.innerHeight * 0.37}
+            active={store.fishingState === 'waiting'}
+          />
+        )}
+        
         {/* Splash */}
         {showSplash && <WaterSplash x={window.innerWidth / 2} y={window.innerHeight * 0.35} />}
         
