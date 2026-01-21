@@ -117,6 +117,229 @@ const FloatingFishBg = () => {
   );
 };
 
+// ========== FISH ENCYCLOPEDIA DATA ==========
+const FISH_ENCYCLOPEDIA = [
+  { id: 1, name: 'Minnow', size: '10-15cm', rarity: 'Common', habitat: 'Lakes', color: '#8B5A2B', desc: 'Small and speedy', points: 10 },
+  { id: 2, name: 'Perch', size: '20-30cm', rarity: 'Common', habitat: 'Rivers', color: '#4CAF50', desc: 'Green striped beauty', points: 25 },
+  { id: 3, name: 'Bass', size: '30-50cm', rarity: 'Uncommon', habitat: 'Lakes', color: '#FF5722', desc: 'A fighter fish!', points: 40 },
+  { id: 4, name: 'Catfish', size: '40-70cm', rarity: 'Uncommon', habitat: 'Deep', color: '#795548', desc: 'Night hunter', points: 80 },
+  { id: 5, name: 'Pike', size: '60-90cm', rarity: 'Rare', habitat: 'Rivers', color: '#2196F3', desc: 'Fast and fierce', points: 120 },
+  { id: 6, name: 'Golden Koi', size: '50-80cm', rarity: 'Legendary', habitat: 'Secret', color: '#FFD700', desc: 'Super rare!', points: 300 },
+];
+
+// ========== TUTORIAL COMPONENT ==========
+const TutorialScreen = ({ onComplete, onBack }) => {
+  const [step, setStep] = useState(0);
+  
+  const tutorialSteps = [
+    {
+      title: "Welcome! 🎣",
+      text: "Let's learn to fish!",
+      emoji: "👋",
+      instruction: "Tap anywhere to continue"
+    },
+    {
+      title: "Step 1: Cast!",
+      text: "Press the big green CAST button to throw your line into the water!",
+      emoji: "🎯",
+      instruction: "The fishing rod goes WHOOSH!"
+    },
+    {
+      title: "Step 2: Wait...",
+      text: "Watch the bobber float in the water. Wait for a fish to bite!",
+      emoji: "⏳",
+      instruction: "Be patient like a real fisher!"
+    },
+    {
+      title: "Step 3: REEL!",
+      text: "When the bobber shakes and you see 'TAP REEL!', quickly tap the REEL button!",
+      emoji: "⚡",
+      instruction: "Be fast! The fish might escape!"
+    },
+    {
+      title: "You Got This! 🏆",
+      text: "Catch fish to earn points and level up! Have fun fishing!",
+      emoji: "🐟",
+      instruction: "Ready to play?"
+    }
+  ];
+  
+  const currentStep = tutorialSteps[step];
+  const isLastStep = step === tutorialSteps.length - 1;
+  
+  return (
+    <div 
+      className="h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #0a1628 0%, #1a4a6a 50%, #2a7090 100%)' }}
+      data-testid="tutorial-screen"
+    >
+      <Toaster position="top-center" richColors />
+      <FloatingFishBg />
+      
+      {/* Progress dots */}
+      <div className="absolute top-8 flex gap-2 z-30">
+        {tutorialSteps.map((_, i) => (
+          <div 
+            key={i} 
+            className={`w-3 h-3 rounded-full transition-all ${i === step ? 'bg-yellow-400 scale-125' : i < step ? 'bg-green-400' : 'bg-white/30'}`}
+          />
+        ))}
+      </div>
+      
+      {/* Main tutorial card */}
+      <div 
+        className="relative z-20 glass-panel rounded-3xl p-8 max-w-md w-full text-center border-4 border-yellow-500/50 shadow-2xl animate-scale-pop cursor-pointer"
+        onClick={() => !isLastStep && setStep(step + 1)}
+      >
+        {/* Big emoji */}
+        <div className="text-8xl mb-6 animate-bounce">{currentStep.emoji}</div>
+        
+        {/* Title */}
+        <h2 className="text-2xl md:text-3xl font-bold text-yellow-400 font-pixel mb-4">
+          {currentStep.title}
+        </h2>
+        
+        {/* Main text - simple for children */}
+        <p className="text-lg md:text-xl text-white mb-4 leading-relaxed">
+          {currentStep.text}
+        </p>
+        
+        {/* Instruction hint */}
+        <p className="text-sm text-blue-300/80 italic">
+          {currentStep.instruction}
+        </p>
+        
+        {/* Navigation buttons */}
+        <div className="flex gap-4 mt-8 justify-center">
+          {step > 0 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setStep(step - 1); }}
+              className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-bold text-white border-2 border-white/30 transition-all"
+            >
+              Back
+            </button>
+          )}
+          
+          {isLastStep ? (
+            <button
+              onClick={(e) => { e.stopPropagation(); onComplete(); }}
+              className="px-8 py-3 bg-gradient-to-b from-green-400 to-green-600 hover:from-green-300 hover:to-green-500 rounded-xl font-bold text-white border-3 border-white shadow-lg transition-all animate-pulse"
+              data-testid="tutorial-start-button"
+            >
+              Start Fishing! 🎣
+            </button>
+          ) : (
+            <button
+              onClick={(e) => { e.stopPropagation(); setStep(step + 1); }}
+              className="px-8 py-3 bg-gradient-to-b from-blue-400 to-blue-600 hover:from-blue-300 hover:to-blue-500 rounded-xl font-bold text-white border-3 border-white shadow-lg transition-all"
+            >
+              Next →
+            </button>
+          )}
+        </div>
+      </div>
+      
+      {/* Back to stage select */}
+      <button 
+        onClick={onBack}
+        className="mt-8 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-bold text-white border-2 border-white/30 transition-all z-20"
+        data-testid="tutorial-back-button"
+      >
+        ← Back to Menu
+      </button>
+    </div>
+  );
+};
+
+// ========== FISH ENCYCLOPEDIA COMPONENT ==========
+const FishEncyclopedia = ({ onClose, caughtFish = {} }) => {
+  const [selectedFish, setSelectedFish] = useState(null);
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-backdrop bg-black/85">
+      <div className="glass-panel rounded-3xl p-6 w-full max-w-lg max-h-[85vh] overflow-auto animate-modal border-2 border-cyan-500/40">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold gradient-text font-pixel flex items-center gap-2">
+            <span className="text-2xl">📖</span> FISHDEX
+          </h2>
+          <div className="text-xs text-cyan-400/80">
+            {Object.keys(caughtFish).length}/{FISH_ENCYCLOPEDIA.length} Discovered
+          </div>
+        </div>
+        
+        {/* Fish Grid */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {FISH_ENCYCLOPEDIA.map((fish) => {
+            const caught = caughtFish[fish.name] > 0;
+            return (
+              <button
+                key={fish.id}
+                onClick={() => setSelectedFish(fish)}
+                className={`fish-dex-entry p-2 rounded-xl border-2 transition-all ${
+                  caught 
+                    ? 'bg-cyan-900/40 border-cyan-500/50 hover:border-cyan-400' 
+                    : 'bg-black/40 border-white/10 opacity-50'
+                } ${selectedFish?.id === fish.id ? 'ring-2 ring-yellow-400' : ''}`}
+                data-testid={`fishdex-${fish.id}`}
+              >
+                <div className="flex justify-center mb-1">
+                  <PixelFish color={caught ? fish.color : '#444'} size={32} />
+                </div>
+                <p className="text-[9px] text-white font-medium truncate">
+                  {caught ? fish.name : '???'}
+                </p>
+                <p className="text-[8px] text-cyan-400/60">
+                  #{String(fish.id).padStart(3, '0')}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+        
+        {/* Selected Fish Detail */}
+        {selectedFish && (
+          <div className="bg-cyan-900/30 rounded-xl p-4 border border-cyan-500/30 mb-4">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <PixelFish color={caughtFish[selectedFish.name] > 0 ? selectedFish.color : '#444'} size={50} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-white mb-1">
+                  {caughtFish[selectedFish.name] > 0 ? selectedFish.name : '???'}
+                </h3>
+                {caughtFish[selectedFish.name] > 0 ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-1 text-[10px]">
+                      <div><span className="text-cyan-400/60">Size:</span> <span className="text-white">{selectedFish.size}</span></div>
+                      <div><span className="text-cyan-400/60">Points:</span> <span className="text-yellow-400">{selectedFish.points}</span></div>
+                      <div><span className="text-cyan-400/60">Rarity:</span> <span className={`${selectedFish.rarity === 'Legendary' ? 'text-yellow-400' : selectedFish.rarity === 'Rare' ? 'text-purple-400' : 'text-green-400'}`}>{selectedFish.rarity}</span></div>
+                      <div><span className="text-cyan-400/60">Habitat:</span> <span className="text-white">{selectedFish.habitat}</span></div>
+                    </div>
+                    <p className="text-[10px] text-cyan-300/80 mt-2 italic">"{selectedFish.desc}"</p>
+                    <p className="text-[10px] text-green-400 mt-1">Caught: {caughtFish[selectedFish.name]}x</p>
+                  </>
+                ) : (
+                  <p className="text-[10px] text-white/50 italic">Catch this fish to learn more!</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Close Button */}
+        <button 
+          onClick={onClose}
+          className="w-full py-3 bg-gradient-to-b from-red-500 to-red-700 hover:from-red-400 hover:to-red-600 rounded-xl font-bold text-white text-sm border-2 border-red-400 transition-all"
+          data-testid="fishdex-close"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const store = useGameStore();
   const [isLoading, setIsLoading] = useState(true);
@@ -132,6 +355,10 @@ function App() {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [flyingFish, setFlyingFish] = useState(null);
   const [scoreAnimation, setScoreAnimation] = useState(false);
+  
+  // New states
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [showFishdex, setShowFishdex] = useState(false);
   
   // Season & visuals
   const [currentSeason, setCurrentSeason] = useState(getCurrentSeason());
@@ -495,7 +722,31 @@ function App() {
     try { setLeaderboardData(await apiService.getLeaderboard(100)); } catch (e) {}
   };
 
+  // Get caught fish stats for encyclopedia
+  const getCaughtFishStats = () => {
+    return store.tacklebox?.fishByType || {};
+  };
+
   // ========== RENDER ==========
+  
+  // Tutorial Screen
+  if (showTutorial) {
+    return (
+      <TutorialScreen 
+        onComplete={() => {
+          setShowTutorial(false);
+          store.setCurrentStage(0);
+          store.setGameState('playing');
+          store.resetGame();
+          if (musicEnabled) retroSounds.startMusic(currentSeason);
+        }}
+        onBack={() => {
+          setShowTutorial(false);
+          store.setGameState('stage_select');
+        }}
+      />
+    );
+  }
   
   // Loading Screen
   if (isLoading) {
@@ -524,10 +775,10 @@ function App() {
     );
   }
 
-  // Menu Screen - Redesigned
+  // Menu Screen - Redesigned with Winter button at bottom
   if (store.gameState === 'menu') {
     return (
-      <div className="h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden" 
+      <div className="h-screen flex flex-col items-center justify-between p-6 relative overflow-hidden" 
            style={{ background: 'linear-gradient(180deg, #0a1628 0%, #0d2040 40%, #1a4060 80%, #2a6090 100%)' }}
            data-testid="menu-screen">
         <Toaster position="top-center" richColors />
@@ -546,87 +797,95 @@ function App() {
           }} />
         ))}
         
-        {/* Season badge */}
-        <div className="absolute top-6 right-6 z-30">
-          <div className={`px-5 py-2.5 rounded-2xl bg-gradient-to-r ${SEASON_COLORS[currentSeason]} border-2 border-white/50 shadow-lg backdrop-blur-sm`}>
-            <span className="text-xl mr-2">{SEASON_ICONS[currentSeason]}</span>
-            <span className="text-white font-bold capitalize text-sm">{currentSeason}</span>
-          </div>
-        </div>
+        {/* Top spacer */}
+        <div />
         
-        {/* Main Logo Section */}
-        <div className={`relative z-20 text-center transition-all duration-1000 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
-          <div className="relative inline-block mb-2">
-            <div className="absolute -inset-8 bg-yellow-400/20 blur-3xl rounded-full" />
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-pixel gradient-text logo-glow tracking-wider relative">
-              GO FISH!
-            </h1>
-          </div>
-        </div>
-        
-        {/* Animated Fish Mascot - Wiggle animation */}
-        <div className={`my-6 relative z-20 transition-all duration-1000 delay-300 ${menuAnimated ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
-          <div className="relative">
-            <div className="absolute -inset-8 bg-yellow-400/30 blur-2xl rounded-full animate-pulse" />
-            <div className="fish-wiggle">
-              <PixelFish color="#FFD700" size={80} />
+        {/* Main content centered */}
+        <div className="flex flex-col items-center">
+          {/* Main Logo Section */}
+          <div className={`relative z-20 text-center transition-all duration-1000 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+            <div className="relative inline-block mb-2">
+              <div className="absolute -inset-8 bg-yellow-400/20 blur-3xl rounded-full" />
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-pixel gradient-text logo-glow tracking-wider relative">
+                GO FISH!
+              </h1>
             </div>
           </div>
-        </div>
-        
-        {/* Menu Buttons */}
-        <div className={`space-y-3 w-64 md:w-72 relative z-20 transition-all duration-1000 delay-500 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <button 
-            onClick={() => { retroSounds.select(); store.setGameState('stage_select'); }}
-            className="menu-btn-primary w-full h-14 rounded-2xl font-bold text-lg text-white tracking-wide flex items-center justify-center gap-3 group"
-            data-testid="start-button"
-          >
-            <span className="text-xl group-hover:scale-125 transition-transform">▶</span>
-            <span>PLAY</span>
-          </button>
           
-          <button 
-            onClick={() => { retroSounds.select(); loadLeaderboard(); setShowLeaderboard(true); }}
-            className="menu-btn-secondary w-full h-12 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2"
-            data-testid="leaderboard-button"
-          >
-            <span className="text-lg">🏆</span>
-            <span>LEADERBOARD</span>
-          </button>
+          {/* Animated Fish Mascot - Wiggle animation */}
+          <div className={`my-6 relative z-20 transition-all duration-1000 delay-300 ${menuAnimated ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
+            <div className="relative">
+              <div className="absolute -inset-8 bg-yellow-400/30 blur-2xl rounded-full animate-pulse" />
+              <div className="fish-wiggle">
+                <PixelFish color="#FFD700" size={80} />
+              </div>
+            </div>
+          </div>
           
-          <div className="flex gap-2">
+          {/* Menu Buttons */}
+          <div className={`space-y-3 w-64 md:w-72 relative z-20 transition-all duration-1000 delay-500 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <button 
-              onClick={() => { retroSounds.select(); setShowAchievements(true); }}
-              className="menu-btn-accent flex-1 h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2"
-              data-testid="achievements-button"
+              onClick={() => { retroSounds.select(); store.setGameState('stage_select'); }}
+              className="menu-btn-primary w-full h-14 rounded-2xl font-bold text-lg text-white tracking-wide flex items-center justify-center gap-3 group"
+              data-testid="start-button"
             >
-              <span>⭐</span>
-              <span className="text-xs">BADGES</span>
+              <span className="text-xl group-hover:scale-125 transition-transform">▶</span>
+              <span>PLAY</span>
             </button>
             
             <button 
-              onClick={() => { retroSounds.select(); setShowSettings(true); }}
-              className="menu-btn-neutral flex-1 h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2"
-              data-testid="settings-button"
+              onClick={() => { retroSounds.select(); loadLeaderboard(); setShowLeaderboard(true); }}
+              className="menu-btn-secondary w-full h-12 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2"
+              data-testid="leaderboard-button"
             >
-              <span>⚙️</span>
-              <span className="text-xs">SETTINGS</span>
+              <span className="text-lg">🏆</span>
+              <span>LEADERBOARD</span>
             </button>
+            
+            <div className="flex gap-2">
+              <button 
+                onClick={() => { retroSounds.select(); setShowAchievements(true); }}
+                className="menu-btn-accent flex-1 h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2"
+                data-testid="achievements-button"
+              >
+                <span>⭐</span>
+                <span className="text-xs">BADGES</span>
+              </button>
+              
+              <button 
+                onClick={() => { retroSounds.select(); setShowSettings(true); }}
+                className="menu-btn-neutral flex-1 h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2"
+                data-testid="settings-button"
+              >
+                <span>⚙️</span>
+                <span className="text-xs">SETTINGS</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Stats Banner */}
+          <div className={`mt-8 relative z-20 transition-all duration-1000 delay-700 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="glass-panel rounded-2xl px-6 py-3 flex gap-8">
+              <div className="text-center">
+                <p className="text-[10px] text-blue-300/60 uppercase tracking-wider mb-1">Best Score</p>
+                <p className="text-lg md:text-xl font-bold text-yellow-400 font-pixel">{store.highScore.toLocaleString()}</p>
+              </div>
+              <div className="w-px bg-white/20" />
+              <div className="text-center">
+                <p className="text-[10px] text-blue-300/60 uppercase tracking-wider mb-1">Fish Caught</p>
+                <p className="text-lg md:text-xl font-bold text-green-400 font-pixel">{store.totalCatches.toLocaleString()}</p>
+              </div>
+            </div>
           </div>
         </div>
         
-        {/* Stats Banner */}
-        <div className={`mt-8 relative z-20 transition-all duration-1000 delay-700 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="glass-panel rounded-2xl px-6 py-3 flex gap-8">
-            <div className="text-center">
-              <p className="text-[10px] text-blue-300/60 uppercase tracking-wider mb-1">Best Score</p>
-              <p className="text-lg md:text-xl font-bold text-yellow-400 font-pixel">{store.highScore.toLocaleString()}</p>
-            </div>
-            <div className="w-px bg-white/20" />
-            <div className="text-center">
-              <p className="text-[10px] text-blue-300/60 uppercase tracking-wider mb-1">Fish Caught</p>
-              <p className="text-lg md:text-xl font-bold text-green-400 font-pixel">{store.totalCatches.toLocaleString()}</p>
-            </div>
+        {/* Season badge at BOTTOM */}
+        <div className={`relative z-30 mb-4 transition-all duration-1000 delay-900 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className={`px-6 py-3 rounded-2xl bg-gradient-to-r ${SEASON_COLORS[currentSeason]} border-2 border-white/50 shadow-lg backdrop-blur-sm cursor-pointer hover:scale-105 transition-transform`}
+               onClick={() => setShowSettings(true)}
+               data-testid="season-badge">
+            <span className="text-xl mr-2">{SEASON_ICONS[currentSeason]}</span>
+            <span className="text-white font-bold capitalize text-sm">{currentSeason}</span>
           </div>
         </div>
 
@@ -741,7 +1000,7 @@ function App() {
     );
   }
 
-  // Stage Select - Redesigned
+  // Stage Select - Redesigned with Tutorial + Fishdex
   if (store.gameState === 'stage_select') {
     const stages = [
       { name: 'Sunny Lake', desc: 'Calm waters, perfect for beginners', icon: '☀️', color: 'from-sky-400 to-cyan-500', accent: '#0ea5e9', difficulty: 1 },
@@ -758,10 +1017,25 @@ function App() {
         
         <FloatingFishBg />
         
-        <h2 className="text-3xl md:text-4xl font-bold mb-10 animate-slide-down gradient-text font-pixel relative z-20">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6 animate-slide-down gradient-text font-pixel relative z-20">
           SELECT WATERS
         </h2>
         
+        {/* Tutorial Card */}
+        <button 
+          onClick={() => { retroSounds.select(); setShowTutorial(true); }}
+          className="mb-4 w-full max-w-lg bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 border-2 border-green-300/50 transition-all duration-300 hover:scale-[1.02] hover:border-white/60 group relative z-20 flex items-center gap-4"
+          data-testid="tutorial-button"
+        >
+          <div className="text-4xl animate-bounce">📚</div>
+          <div className="text-left flex-1">
+            <h3 className="font-bold text-white text-lg">Tutorial</h3>
+            <p className="text-green-100/80 text-xs">Learn how to fish! Perfect for new players</p>
+          </div>
+          <div className="text-2xl group-hover:translate-x-1 transition-transform">→</div>
+        </button>
+        
+        {/* Stage Grid */}
         <div className="grid grid-cols-2 gap-4 w-full max-w-lg relative z-20">
           {stages.map((stage, i) => (
             <button 
@@ -789,13 +1063,33 @@ function App() {
           ))}
         </div>
         
-        <button 
-          onClick={() => { retroSounds.select(); store.setGameState('menu'); }}
-          className="mt-10 px-10 py-4 bg-white/10 hover:bg-white/20 rounded-2xl font-bold text-white border-2 border-white/30 transition-all relative z-20"
-          data-testid="back-button"
-        >
-          ← BACK
-        </button>
+        {/* Bottom buttons: Fishdex + Back */}
+        <div className="flex gap-4 mt-6 relative z-20">
+          <button 
+            onClick={() => { retroSounds.select(); setShowFishdex(true); }}
+            className="px-6 py-3 bg-gradient-to-b from-cyan-500 to-cyan-700 hover:from-cyan-400 hover:to-cyan-600 rounded-2xl font-bold text-white border-2 border-cyan-300/50 transition-all flex items-center gap-2"
+            data-testid="fishdex-button"
+          >
+            <span className="text-xl">📖</span>
+            <span className="text-sm">Fishdex</span>
+          </button>
+          
+          <button 
+            onClick={() => { retroSounds.select(); store.setGameState('menu'); }}
+            className="px-10 py-3 bg-white/10 hover:bg-white/20 rounded-2xl font-bold text-white border-2 border-white/30 transition-all"
+            data-testid="back-button"
+          >
+            ← BACK
+          </button>
+        </div>
+        
+        {/* Fish Encyclopedia Modal */}
+        {showFishdex && (
+          <FishEncyclopedia 
+            onClose={() => setShowFishdex(false)} 
+            caughtFish={getCaughtFishStats()}
+          />
+        )}
       </div>
     );
   }
@@ -953,25 +1247,26 @@ function App() {
         {/* Whale */}
         <WhaleSprite show={showWhale} />
         
-        {/* Fishing Line */}
+        {/* Fishing Line - hidden behind water layer */}
         {(store.fishingState === 'waiting' || store.fishingState === 'bite' || store.fishingState === 'reeling') && (
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-20">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-[5]">
             <line 
               x1="15%" 
               y1="100%" 
               x2="50%" 
               y2="55%" 
-              stroke="#999" 
-              strokeWidth="2" 
+              stroke="#666" 
+              strokeWidth="1.5" 
               strokeDasharray={store.fishingState === 'bite' ? "4" : "0"}
               className={store.fishingState === 'bite' ? 'animate-pulse' : ''}
+              opacity="0.6"
             />
           </svg>
         )}
         
-        {/* Bobber */}
+        {/* Bobber - HIDDEN behind water layer (z-index lower than water) */}
         {(store.fishingState === 'waiting' || store.fishingState === 'bite') && (
-          <div className={`absolute left-1/2 bobber ${store.fishingState === 'bite' ? 'active' : ''}`}
+          <div className={`absolute left-1/2 bobber z-[8] ${store.fishingState === 'bite' ? 'active' : ''}`}
             style={{ top: '52%', transform: `translateX(-50%) translateY(${bobberY}px)` }}>
             <PixelBobber isActive={store.fishingState === 'bite'} wobble={store.fishingState === 'waiting'} />
           </div>
@@ -1072,24 +1367,27 @@ function App() {
             </svg>
           </div>
           
-          {/* Center: Cast/Reel Buttons */}
+          {/* Center: Cast/Reel Buttons - SMALLER FONT */}
           <div className="flex flex-col items-center gap-2">
             <button 
               onClick={handleCast} 
               disabled={store.fishingState !== 'idle'} 
-              className="btn-cast w-24 h-24 md:w-28 md:h-28 rounded-full font-bold text-base md:text-lg text-white font-pixel btn-smooth" 
+              className="btn-cast w-24 h-24 md:w-28 md:h-28 rounded-full font-bold text-white btn-smooth flex items-center justify-center" 
               data-testid="cast-button"
             >
-              {store.fishingState === 'idle' ? 'CAST' : store.fishingState === 'waiting' ? '...' : store.fishingState.toUpperCase()}
+              <span className="font-pixel text-xs md:text-sm leading-none">
+                {store.fishingState === 'idle' ? 'CAST' : store.fishingState === 'waiting' ? '...' : store.fishingState.toUpperCase()}
+              </span>
             </button>
             
             {store.fishingState === 'bite' && (
               <button 
                 onClick={handleReel} 
-                className="btn-reel w-24 h-12 md:w-28 md:h-14 rounded-xl font-bold text-white text-sm md:text-base animate-pulse btn-smooth" 
+                className="btn-reel w-24 h-12 md:w-28 md:h-14 rounded-xl font-bold text-white animate-pulse btn-smooth flex items-center justify-center gap-1" 
                 data-testid="reel-button"
               >
-                🎣 REEL!
+                <span className="text-base">🎣</span>
+                <span className="font-pixel text-xs">REEL!</span>
               </button>
             )}
           </div>
