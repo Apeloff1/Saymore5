@@ -807,6 +807,16 @@
   }
 }
 
+/* ========== SNOWFLAKE SHIMMER ========== */
+.snowflake-shimmer {
+  animation: snowflakeShimmer 2s ease-in-out infinite;
+}
+
+@keyframes snowflakeShimmer {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
 /* ========== SEASONAL PARTICLES ========== */
 .particle-petal,
 .particle-leaf,
@@ -814,6 +824,10 @@
 .particle-butterfly {
   animation: particleFall linear infinite;
   top: -20px;
+}
+
+.particle-snow {
+  animation: snowFall linear infinite;
 }
 
 .particle-leaf {
@@ -846,6 +860,27 @@
   100% { 
     transform: translateY(100vh) translateX(0); 
     opacity: 0.8;
+  }
+}
+
+@keyframes snowFall {
+  0% { 
+    transform: translateY(0) translateX(0) rotate(0deg); 
+    opacity: 0.8;
+  }
+  25% { 
+    transform: translateY(25vh) translateX(var(--sway, 8px)) rotate(90deg); 
+  }
+  50% { 
+    transform: translateY(50vh) translateX(calc(var(--sway, 8px) * -0.7)) rotate(180deg); 
+    opacity: 1;
+  }
+  75% { 
+    transform: translateY(75vh) translateX(var(--sway, 8px)) rotate(270deg); 
+  }
+  100% { 
+    transform: translateY(100vh) translateX(0) rotate(360deg); 
+    opacity: 0.7;
   }
 }
 
