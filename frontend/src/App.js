@@ -14,7 +14,7 @@ import {
   WaterSplash,
   ParticleEffects,
   WhaleSprite,
-  FlyingBirds,
+  FlyingSeagulls,
   AnimatedIsland,
   AnimatedBoats,
 } from './components/GameSprites';
