@@ -519,125 +519,535 @@
   animation: scalePop 0.5s ease-out, gentleFloat 2.5s ease-in-out 0.5s infinite;
 }
 
-.game-message {
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.92) 0%, rgba(20, 35, 60, 0.96) 100%);
-  border: 3px solid var(--gold);
-  border-radius: 12px;
-  padding: 14px 28px;
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.55),
-    0 0 25px rgba(255, 215, 0, 0.25);
-  animation: scalePop 0.35s ease-out;
-}
-
 /* ========== SPRITE ANIMATIONS ========== */
 
-@keyframes splash {
-  0% { opacity: 1; transform: scale(0.5); }
-  50% { opacity: 0.8; transform: scale(1.2); }
-  100% { opacity: 0; transform: scale(1.5) translateY(-20px); }
+/* GPU Acceleration */
+.gpu-accelerate {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
-@keyframes particle {
-  0% { opacity: 1; transform: scale(1) translate(0, 0); }
-  100% { opacity: 0; transform: scale(0.3) translate(var(--tx, 50px), var(--ty, -80px)); }
+.will-change-transform {
+  will-change: transform, opacity;
 }
 
-@keyframes sunRays {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.sky-transition {
+  transition: background 2s ease-in-out;
+}
+
+/* ========== SUN ANIMATIONS ========== */
+.sun-container {
+  transition: opacity 1s ease-in-out;
+}
+
+.sun-rotate {
+  animation: sunRotate 60s linear infinite;
+}
+
+.sun-ray {
+  animation: sunRayPulse 3s ease-in-out infinite;
+  transform-origin: 45px 45px;
+}
+
+@keyframes sunRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sunRayPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* ========== MOON ANIMATIONS ========== */
+.moon-container {
+  transition: opacity 1s ease-in-out;
+}
+
+.moon-glow {
+  animation: moonGlow 4s ease-in-out infinite;
 }
 
 @keyframes moonGlow {
-  0%, 100% { box-shadow: 0 0 30px rgba(245, 245, 220, 0.4); }
-  50% { box-shadow: 0 0 50px rgba(245, 245, 220, 0.7); }
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(245, 245, 220, 0.3)); }
+  50% { filter: drop-shadow(0 0 25px rgba(245, 245, 220, 0.5)); }
+}
+
+/* ========== STAR ANIMATIONS ========== */
+.star-twinkle {
+  animation: starTwinkle ease-in-out infinite;
 }
 
 @keyframes starTwinkle {
   0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.3); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ========== CLOUD ANIMATIONS (Smooth CSS) ========== */
+.cloud-float {
+  animation: cloudFloat linear infinite;
+  left: -200px;
 }
 
 @keyframes cloudFloat {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(100vw); }
+  from { transform: translateX(0) scale(var(--scale, 0.3)); }
+  to { transform: translateX(calc(100vw + 400px)) scale(var(--scale, 0.3)); }
+}
+
+/* ========== SEAGULL ANIMATIONS ========== */
+.seagull-fly {
+  animation: seagullFly linear infinite;
+  left: -60px;
+}
+
+.seagull-fly.seagull-left {
+  animation: seagullFlyLeft linear infinite;
+  left: auto;
+  right: -60px;
+}
+
+.seagull-wings {
+  animation: wingFlap ease-in-out infinite;
+}
+
+.wing-left, .wing-right {
+  transform-origin: 20px 11px;
+  animation: wingMove ease-in-out infinite;
 }
 
 @keyframes seagullFly {
+  from { transform: translateX(0) translateY(0); }
+  to { transform: translateX(calc(100vw + 120px)) translateY(0); }
+}
+
+@keyframes seagullFlyLeft {
+  from { transform: translateX(0) scaleX(-1); }
+  to { transform: translateX(calc(-100vw - 120px)) scaleX(-1); }
+}
+
+@keyframes wingFlap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.85); }
+}
+
+@keyframes wingMove {
+  0%, 100% { d: path('M 20 11 Q 12 6 4 4'); }
+  50% { d: path('M 20 11 Q 12 14 4 16'); }
+}
+
+/* ========== ISLAND ANIMATIONS ========== */
+.island-bob {
+  animation: islandBob 4s ease-in-out infinite;
+}
+
+.palm-sway {
+  animation: palmSway 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.palm-sway-small {
+  animation: palmSwaySmall 2.8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.palm-leaf {
+  animation: leafSway 3.5s ease-in-out infinite;
+}
+
+.ripple-1 {
+  animation: rippleExpand 3s ease-in-out infinite;
+}
+
+.ripple-2 {
+  animation: rippleExpand 3s ease-in-out infinite 0.5s;
+}
+
+@keyframes islandBob {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-4px); }
 }
 
-@keyframes whaleBob {
-  0%, 100% { transform: translateY(0) rotate(-1deg); }
-  50% { transform: translateY(-8px) rotate(1deg); }
+@keyframes palmSway {
+  0%, 100% { transform: rotate(0deg) skewX(0deg); }
+  25% { transform: rotate(1.5deg) skewX(1deg); }
+  75% { transform: rotate(-1.5deg) skewX(-1deg); }
 }
 
-@keyframes waterRipple {
-  0% { transform: scale(0); opacity: 0.8; }
-  100% { transform: scale(3); opacity: 0; }
+@keyframes palmSwaySmall {
+  0%, 100% { transform: rotate(0deg); }
+  33% { transform: rotate(2deg); }
+  66% { transform: rotate(-2deg); }
 }
 
-@keyframes leafFall {
-  0% { transform: translateY(-10%) rotate(0deg); }
-  25% { transform: translateY(25%) rotate(90deg) translateX(15px); }
-  50% { transform: translateY(50%) rotate(180deg) translateX(-10px); }
-  75% { transform: translateY(75%) rotate(270deg) translateX(10px); }
-  100% { transform: translateY(110%) rotate(360deg) translateX(-5px); }
+@keyframes leafSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(3deg); }
 }
 
-@keyframes snowFall {
-  0% { transform: translateY(-5%) translateX(0); }
-  25% { transform: translateY(25%) translateX(10px); }
-  50% { transform: translateY(50%) translateX(-5px); }
-  75% { transform: translateY(75%) translateX(8px); }
-  100% { transform: translateY(105%) translateX(-3px); }
+@keyframes rippleExpand {
+  0%, 100% { transform: scaleX(1); opacity: 0.2; }
+  50% { transform: scaleX(1.08); opacity: 0.35; }
 }
 
-@keyframes petalFloat {
-  0% { transform: translateY(-10%) rotate(0deg); opacity: 0.9; }
-  50% { transform: translateY(50%) rotate(180deg) translateX(20px); opacity: 1; }
-  100% { transform: translateY(110%) rotate(360deg) translateX(-10px); opacity: 0.8; }
+/* ========== WATER ANIMATIONS ========== */
+.water-container {
+  overflow: hidden;
 }
 
-@keyframes butterflyFly {
-  0%, 100% { transform: translateY(0) scaleX(1); }
-  25% { transform: translateY(-15px) scaleX(-1); }
-  50% { transform: translateY(0) scaleX(1); }
-  75% { transform: translateY(10px) scaleX(-1); }
-}
-
-.animate-splash { animation: splash 0.6s ease-out forwards; }
-.animate-particle { animation: particle 0.8s ease-out forwards; }
-.animate-star-twinkle { animation: starTwinkle 2s ease-in-out infinite; }
-.animate-cloud { animation: cloudFloat 60s linear infinite; }
-.animate-seagull { animation: seagullFly 2s ease-in-out infinite; }
-.animate-whale { animation: whaleBob 4s ease-in-out infinite; }
-.animate-ripple { animation: waterRipple 2s ease-out infinite; }
-.animate-leaf { animation: leafFall 8s linear infinite; }
-.animate-snow { animation: snowFall 6s linear infinite; }
-.animate-petal { animation: petalFloat 7s ease-in-out infinite; }
-.animate-butterfly { animation: butterflyFly 3s ease-in-out infinite; }
-
-/* Sun/Moon transition */
-.celestial-body {
-  transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
-}
-
-/* Water shimmer effect */
-.water-shimmer {
-  background: linear-gradient(
+.wave-layer-1 {
+  background: repeating-linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
+    rgba(255,255,255,0.03) 25%,
+    transparent 50%
   );
-  animation: shimmer 3s ease-in-out infinite;
+  background-size: 200px 100%;
+  animation: waveMove1 8s linear infinite;
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+.wave-layer-2 {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.025) 30%,
+    transparent 60%
+  );
+  background-size: 150px 100%;
+  animation: waveMove2 6s linear infinite;
+}
+
+.wave-layer-3 {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.02) 35%,
+    transparent 70%
+  );
+  background-size: 100px 100%;
+  animation: waveMove3 4s linear infinite;
+}
+
+.water-sparkle {
+  width: 4px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: waterSparkle 2.5s ease-in-out infinite;
+}
+
+.water-shine {
+  background: linear-gradient(170deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
+  animation: waterShine 6s ease-in-out infinite;
+}
+
+.fish-swim {
+  animation: fishSwim linear infinite;
+  left: -50px;
+}
+
+@keyframes waveMove1 {
+  from { background-position-x: 0; }
+  to { background-position-x: 200px; }
+}
+
+@keyframes waveMove2 {
+  from { background-position-x: 0; }
+  to { background-position-x: -150px; }
+}
+
+@keyframes waveMove3 {
+  from { background-position-x: 0; }
+  to { background-position-x: 100px; }
+}
+
+@keyframes waterSparkle {
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.5); }
+}
+
+@keyframes waterShine {
+  0%, 100% { transform: translateX(-30%); }
+  50% { transform: translateX(30%); }
+}
+
+@keyframes fishSwim {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(100vw + 100px)); }
+}
+
+/* ========== BUBBLE ANIMATIONS ========== */
+.bubble-rise {
+  animation: bubbleRise ease-out infinite;
+}
+
+@keyframes bubbleRise {
+  0% { 
+    transform: translateY(0) translateX(0); 
+    opacity: 0.6; 
+  }
+  50% { 
+    transform: translateY(-25vh) translateX(8px); 
+    opacity: 0.8; 
+  }
+  100% { 
+    transform: translateY(-50vh) translateX(-5px); 
+    opacity: 0; 
+  }
+}
+
+/* ========== SEASONAL PARTICLES ========== */
+.particle-petal,
+.particle-leaf,
+.particle-snow,
+.particle-butterfly {
+  animation: particleFall linear infinite;
+  top: -20px;
+}
+
+.particle-leaf {
+  animation: particleFall linear infinite, leafRotate 3s linear infinite;
+}
+
+.leaf-spin {
+  animation: leafRotate 2s linear infinite;
+}
+
+.butterfly-flutter {
+  animation: butterflyFlutter 0.3s ease-in-out infinite;
+}
+
+@keyframes particleFall {
+  0% { 
+    transform: translateY(0) translateX(0); 
+    opacity: 0.9;
+  }
+  25% { 
+    transform: translateY(25vh) translateX(var(--sway, 15px)); 
+  }
+  50% { 
+    transform: translateY(50vh) translateX(calc(var(--sway, 15px) * -0.5)); 
+    opacity: 1;
+  }
+  75% { 
+    transform: translateY(75vh) translateX(var(--sway, 15px)); 
+  }
+  100% { 
+    transform: translateY(100vh) translateX(0); 
+    opacity: 0.8;
+  }
+}
+
+@keyframes leafRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes butterflyFlutter {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(-1); }
+}
+
+/* ========== FIREFLY ANIMATIONS ========== */
+.firefly-float {
+  animation: fireflyFloat ease-in-out infinite;
+}
+
+.firefly-glow {
+  background: radial-gradient(circle, rgba(255,255,150,0.9) 0%, rgba(200,255,100,0.4) 50%, transparent 100%);
+  animation: fireflyGlow ease-in-out infinite;
+}
+
+@keyframes fireflyFloat {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(15px, -10px); }
+  50% { transform: translate(-10px, 5px); }
+  75% { transform: translate(8px, -15px); }
+}
+
+@keyframes fireflyGlow {
+  0%, 100% { opacity: 0.3; box-shadow: 0 0 5px rgba(255,255,100,0.3); }
+  50% { opacity: 1; box-shadow: 0 0 15px rgba(255,255,100,0.8); }
+}
+
+/* ========== SHOOTING STAR ========== */
+.shooting-star {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, white 50%, white 100%);
+  animation: shootingStar ease-out forwards;
+  box-shadow: 0 0 8px white;
+}
+
+@keyframes shootingStar {
+  0% { opacity: 0; transform: rotate(var(--angle, 25deg)) translateX(0); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--angle, 25deg)) translateX(150px); }
+}
+
+/* ========== LENS FLARE ========== */
+.lens-flare-container {
+  animation: lensFlareShimmer 3s ease-in-out infinite;
+}
+
+.lens-flare-main {
+  background: radial-gradient(circle, rgba(255,255,200,0.25) 0%, rgba(255,200,100,0.1) 40%, transparent 70%);
+  animation: lensFlarePulse 2s ease-in-out infinite;
+}
+
+.lens-flare-secondary {
+  background: radial-gradient(circle, rgba(255,180,100,0.2) 0%, transparent 70%);
+}
+
+.lens-flare-tertiary {
+  background: radial-gradient(circle, rgba(100,200,255,0.15) 0%, transparent 70%);
+}
+
+@keyframes lensFlareShimmer {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@keyframes lensFlarePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ========== RAIN EFFECT ========== */
+.rain-effect {
+  background-image: 
+    linear-gradient(180deg, rgba(180, 200, 255, 0.5) 0%, rgba(100, 150, 220, 0.2) 100%),
+    repeating-linear-gradient(
+      110deg,
+      transparent 0px,
+      transparent 8px,
+      rgba(180, 200, 255, 0.3) 8px,
+      rgba(180, 200, 255, 0.3) 10px
+    );
+  background-size: 100% 100%, 20px 100%;
+  animation: rainFall 0.3s linear infinite;
+}
+
+@keyframes rainFall {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 50px, 10px 50px; }
+}
+
+.lightning-flash {
+  animation: lightningFlash 0.1s ease-out;
+}
+
+@keyframes lightningFlash {
+  0% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* ========== BOAT & WHALE ========== */
+.boat-float {
+  animation: boatFloat linear infinite;
+  animation-duration: 40s;
+  left: -150px;
+}
+
+@keyframes boatFloat {
+  0% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(25vw) translateY(-3px); }
+  50% { transform: translateX(50vw) translateY(0); }
+  75% { transform: translateX(75vw) translateY(-3px); }
+  100% { transform: translateX(calc(100vw + 200px)) translateY(0); }
+}
+
+.whale-swim {
+  animation: whaleSwim 35s linear forwards;
+  left: -200px;
+}
+
+.whale-tail {
+  animation: whaleTail 2s ease-in-out infinite;
+  transform-origin: 88px 42px;
+}
+
+.whale-spout {
+  animation: whaleSpout 4s ease-in-out infinite;
+}
+
+@keyframes whaleSwim {
+  0% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(25vw) translateY(-6px); }
+  50% { transform: translateX(50vw) translateY(0); }
+  75% { transform: translateX(75vw) translateY(-6px); }
+  100% { transform: translateX(calc(100vw + 250px)) translateY(0); }
+}
+
+@keyframes whaleTail {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(8deg); }
+}
+
+@keyframes whaleSpout {
+  0%, 60%, 100% { opacity: 0; transform: scaleY(0); }
+  70%, 90% { opacity: 0.7; transform: scaleY(1); }
+}
+
+/* ========== FISH & BOBBER ========== */
+.fish-wiggle {
+  animation: fishWiggle 0.4s ease-in-out infinite;
+}
+
+.bobber-bob {
+  animation: bobberBob 2.5s ease-in-out infinite;
+}
+
+.bobber-shake {
+  animation: bobberShake 0.1s ease-in-out infinite;
+}
+
+.bobber-ring {
+  animation: bobberRing 1s ease-out infinite;
+}
+
+.bobber-ring.ring-2 {
+  animation-delay: 0.2s;
+}
+
+@keyframes fishWiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes bobberBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes bobberShake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-4px) rotate(-3deg); }
+  75% { transform: translateX(4px) rotate(3deg); }
+}
+
+@keyframes bobberRing {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.splash-anim {
+  animation: splashAnim 0.5s ease-out forwards;
+}
+
+@keyframes splashAnim {
+  0% { opacity: 1; transform: scale(0.6); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.3) translateY(-15px); }
+}
+
+.particle-burst {
+  animation: particleBurst 0.6s ease-out forwards;
+}
+
+@keyframes particleBurst {
+  0% { opacity: 1; transform: scale(0.5); }
+  100% { opacity: 0; transform: scale(1.5); }
 }
 
 /* ========== DECORATIVE ELEMENTS ========== */
