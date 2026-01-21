@@ -1264,11 +1264,11 @@ function App() {
           </svg>
         )}
         
-        {/* Bobber - HIDDEN behind water layer (z-index lower than water) */}
-        {(store.fishingState === 'waiting' || store.fishingState === 'bite') && (
-          <div className={`absolute left-1/2 bobber z-[8] ${store.fishingState === 'bite' ? 'active' : ''}`}
+        {/* Bobber - ONLY visible during bite (hidden during waiting) */}
+        {store.fishingState === 'bite' && (
+          <div className={`absolute left-1/2 bobber active z-[25]`}
             style={{ top: '52%', transform: `translateX(-50%) translateY(${bobberY}px)` }}>
-            <PixelBobber isActive={store.fishingState === 'bite'} wobble={store.fishingState === 'waiting'} />
+            <PixelBobber isActive={true} wobble={false} />
           </div>
         )}
         
