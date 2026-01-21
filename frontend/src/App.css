@@ -1096,6 +1096,191 @@
   100% { opacity: 0; transform: scale(1.5); }
 }
 
+/* ========== NEURON ACTIVATION EFFECTS ========== */
+
+/* Screen shake on catch */
+.screen-shake {
+  animation: screenShake 0.3s ease-out;
+}
+
+@keyframes screenShake {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  10% { transform: translateX(-4px) translateY(-2px); }
+  20% { transform: translateX(4px) translateY(2px); }
+  30% { transform: translateX(-3px) translateY(-1px); }
+  40% { transform: translateX(3px) translateY(1px); }
+  50% { transform: translateX(-2px) translateY(-2px); }
+  60% { transform: translateX(2px) translateY(2px); }
+  70% { transform: translateX(-1px) translateY(-1px); }
+  80% { transform: translateX(1px) translateY(1px); }
+}
+
+/* Combo flash */
+.combo-flash {
+  animation: comboFlash 0.2s ease-out;
+}
+
+@keyframes comboFlash {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.5) saturate(1.3); }
+  100% { filter: brightness(1); }
+}
+
+/* Streak fire mode */
+.streak-fire {
+  animation: streakFire 0.5s ease-out;
+}
+
+@keyframes streakFire {
+  0% { box-shadow: inset 0 0 0 rgba(255, 100, 0, 0); }
+  30% { box-shadow: inset 0 0 60px rgba(255, 100, 0, 0.3); }
+  100% { box-shadow: inset 0 0 0 rgba(255, 100, 0, 0); }
+}
+
+/* Rare catch glow */
+.rare-glow {
+  animation: rareGlow 1.5s ease-out;
+}
+
+@keyframes rareGlow {
+  0% { box-shadow: inset 0 0 0 rgba(200, 150, 255, 0); }
+  30% { box-shadow: inset 0 0 80px rgba(200, 150, 255, 0.4); }
+  100% { box-shadow: inset 0 0 0 rgba(200, 150, 255, 0); }
+}
+
+/* Points popup */
+.points-popup {
+  animation: pointsPopup 1.5s ease-out forwards;
+}
+
+@keyframes pointsPopup {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  30% { transform: translate(-50%, -50%) scale(1); }
+  70% { opacity: 1; transform: translate(-50%, -70%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -100%) scale(0.8); }
+}
+
+.perfect-glow {
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 0 20px rgba(255, 215, 0, 0.6),
+    0 0 40px rgba(255, 215, 0, 0.4);
+  animation: perfectGlow 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes perfectGlow {
+  0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.6); }
+  100% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.5); }
+}
+
+/* Combo indicator */
+.combo-pulse {
+  animation: comboPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes comboPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.on-fire {
+  animation: onFire 0.3s ease-in-out infinite, comboPulse 0.5s ease-in-out infinite;
+  text-shadow: 
+    0 0 10px rgba(255, 100, 0, 0.9),
+    0 0 20px rgba(255, 50, 0, 0.7),
+    0 0 30px rgba(255, 150, 0, 0.5);
+}
+
+@keyframes onFire {
+  0%, 100% { filter: brightness(1) hue-rotate(0deg); }
+  50% { filter: brightness(1.2) hue-rotate(10deg); }
+}
+
+/* Satisfying button press */
+.btn-cast:active:not(:disabled),
+.btn-reel:active {
+  animation: buttonPress 0.15s ease-out;
+}
+
+@keyframes buttonPress {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+/* Progress bar fill satisfaction */
+.progress-fill {
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Score pop animation */
+.animate-score-pop {
+  animation: scorePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scorePop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); color: #4ade80; }
+  100% { transform: scale(1); }
+}
+
+/* Level up celebration */
+.level-up-celebration {
+  animation: levelUpCelebration 1s ease-out;
+}
+
+@keyframes levelUpCelebration {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.5) rotate(-10deg); 
+  }
+  30% { 
+    opacity: 1; 
+    transform: scale(1.2) rotate(5deg); 
+  }
+  50% { 
+    transform: scale(1) rotate(0deg); 
+  }
+  70% { 
+    transform: scale(1.05) rotate(-2deg); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) rotate(0deg); 
+  }
+}
+
+/* Hover sound trigger helper */
+.hover-sound:hover {
+  cursor: pointer;
+}
+
+/* Smooth transitions for all interactive elements */
+button, .interactive {
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              box-shadow 0.15s ease,
+              filter 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+/* Ultra-smooth scrolling */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ========== DECORATIVE ELEMENTS ========== */
 
 .floating-sparkle {
