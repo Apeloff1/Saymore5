@@ -606,26 +606,26 @@ function App() {
             
             <button 
               onClick={() => { retroSounds.select(); setShowSettings(true); }}
-              className="menu-btn-neutral flex-1 h-14 rounded-2xl font-bold text-white flex items-center justify-center gap-2"
+              className="menu-btn-neutral flex-1 h-12 rounded-2xl font-bold text-white flex items-center justify-center gap-2"
               data-testid="settings-button"
             >
               <span>⚙️</span>
-              <span className="text-sm">SETTINGS</span>
+              <span className="text-xs">SETTINGS</span>
             </button>
           </div>
         </div>
         
         {/* Stats Banner */}
-        <div className={`mt-10 relative z-20 transition-all duration-1000 delay-700 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="glass-panel rounded-2xl px-8 py-4 flex gap-10">
+        <div className={`mt-8 relative z-20 transition-all duration-1000 delay-700 ${menuAnimated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="glass-panel rounded-2xl px-6 py-3 flex gap-8">
             <div className="text-center">
-              <p className="text-xs text-blue-300/60 uppercase tracking-wider mb-1">Best Score</p>
-              <p className="text-2xl font-bold text-yellow-400 font-pixel">{store.highScore.toLocaleString()}</p>
+              <p className="text-[10px] text-blue-300/60 uppercase tracking-wider mb-1">Best Score</p>
+              <p className="text-lg md:text-xl font-bold text-yellow-400 font-pixel">{store.highScore.toLocaleString()}</p>
             </div>
             <div className="w-px bg-white/20" />
             <div className="text-center">
-              <p className="text-xs text-blue-300/60 uppercase tracking-wider mb-1">Fish Caught</p>
-              <p className="text-2xl font-bold text-green-400 font-pixel">{store.totalCatches.toLocaleString()}</p>
+              <p className="text-[10px] text-blue-300/60 uppercase tracking-wider mb-1">Fish Caught</p>
+              <p className="text-lg md:text-xl font-bold text-green-400 font-pixel">{store.totalCatches.toLocaleString()}</p>
             </div>
           </div>
         </div>
