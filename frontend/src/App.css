@@ -1539,11 +1539,11 @@ button:focus-visible {
   .btn-cast {
     width: 80px !important;
     height: 80px !important;
-    font-size: 0.55rem !important;
+    font-size: 0.4rem !important;
   }
   
   .btn-reel {
-    font-size: 0.5rem !important;
+    font-size: 0.35rem !important;
   }
   
   .equip-btn {
@@ -1560,11 +1560,11 @@ button:focus-visible {
 /* Large screens */
 @media (min-width: 1024px) {
   .btn-cast {
-    font-size: 0.75rem !important;
+    font-size: 0.55rem !important;
   }
   
   .btn-reel {
-    font-size: 0.7rem !important;
+    font-size: 0.5rem !important;
   }
 }
 
