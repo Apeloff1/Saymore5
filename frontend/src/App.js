@@ -360,6 +360,15 @@ function App() {
   // New states
   const [showTutorial, setShowTutorial] = useState(false);
   const [showFishdex, setShowFishdex] = useState(false);
+  const [showExpansionShop, setShowExpansionShop] = useState(false);
+  const [purchasedItems, setPurchasedItems] = useState({});
+  const [fishingSkills, setFishingSkills] = useState({
+    casting: 0,
+    reeling: 0,
+    patience: 0,
+    strength: 0,
+    luck: 0,
+  });
   
   // Season & visuals
   const [currentSeason, setCurrentSeason] = useState(getCurrentSeason());
@@ -382,6 +391,16 @@ function App() {
   const [pointsPopup, setPointsPopup] = useState(null);
   const [streakFire, setStreakFire] = useState(false);
   const [rareCatchGlow, setRareCatchGlow] = useState(false);
+  
+  // Handle expansion purchase
+  const handleExpansionPurchase = (items) => {
+    const newPurchased = { ...purchasedItems };
+    items.forEach(item => {
+      newPurchased[`${item.type}_${item.id}`] = true;
+    });
+    setPurchasedItems(newPurchased);
+    localStorage.setItem('gofish_purchases', JSON.stringify(newPurchased));
+  };
   
   const biteTimeoutRef = useRef(null);
   const bobberAnimRef = useRef(null);
