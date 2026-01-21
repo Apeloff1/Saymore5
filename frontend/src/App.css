@@ -1,34 +1,649 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========== 50-STEP UI REFINEMENT ========== */
+
+/* Step 1: Import premium fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 20% 5%;
+    --foreground: 45 100% 60%;
+    --card: 220 20% 8%;
+    --card-foreground: 45 100% 60%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 220 20% 5%;
+    --secondary: 200 80% 50%;
+    --accent: 150 80% 45%;
+    --destructive: 0 80% 50%;
+    --border: 45 100% 50%;
+    --ring: 45 100% 50%;
+    --radius: 0.5rem;
+    
+    /* Custom colors */
+    --ocean-deep: #0a1628;
+    --ocean-mid: #1a3a5c;
+    --ocean-light: #2a6090;
+    --gold: #ffd700;
+    --gold-dark: #b8860b;
+    --neon-blue: #00d4ff;
+    --neon-green: #00ff88;
+    --neon-pink: #ff0080;
+  }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Orbitron', sans-serif;
+    overflow: hidden;
+  }
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Step 2: Pixel font for retro elements */
+.font-pixel {
+  font-family: 'Press Start 2P', cursive;
+  letter-spacing: 0.05em;
 }
 
-.App-link {
-    color: #61dafb;
+/* Step 3: Smooth global transitions */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+/* Step 4: Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+  border-radius: 3px;
+}
+
+/* ========== ANIMATIONS ========== */
+
+/* Step 5: Smooth fade in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Step 6: Slide up entrance */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Step 7: Slide down entrance */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Step 8: Scale pop */
+@keyframes scalePop {
+  0% { transform: scale(0.8); opacity: 0; }
+  70% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Step 9: Gentle float */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Step 10: Pulse glow */
+@keyframes pulseGlow {
+  0%, 100% { 
+    box-shadow: 0 0 5px var(--gold), 0 0 10px var(--gold); 
+    filter: brightness(1);
+  }
+  50% { 
+    box-shadow: 0 0 15px var(--gold), 0 0 30px var(--gold), 0 0 45px var(--gold); 
+    filter: brightness(1.2);
+  }
+}
+
+/* Step 11: Text shimmer */
+@keyframes textShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Step 12: Ripple effect */
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* Step 13: Wiggle animation */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+/* Step 14: Shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px) rotate(-2deg); }
+  75% { transform: translateX(5px) rotate(2deg); }
+}
+
+/* Step 15: Bob animation */
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Step 16: Spin slow */
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Step 17: Water wave */
+@keyframes waterWave {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Step 18: Particle burst */
+@keyframes particleBurst {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx, 30px), var(--ty, -50px)) scale(0); opacity: 0; }
+}
+
+/* Step 19: Fish swim */
+@keyframes fishSwim {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  25% { transform: translateX(10px) scaleX(1); }
+  50% { transform: translateX(0) scaleX(1); }
+  75% { transform: translateX(-10px) scaleX(1); }
+}
+
+/* Step 20: Fish to tacklebox */
+@keyframes fishToBox {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: translate(-40vw, 10vh) scale(0.7) rotate(15deg); opacity: 0.9; }
+  100% { transform: translate(-45vw, 30vh) scale(0.2) rotate(30deg); opacity: 0; }
+}
+
+/* Step 21: Button press */
+@keyframes buttonPress {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Step 22: Menu item entrance stagger */
+@keyframes menuSlideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Step 23: Modal backdrop */
+@keyframes backdropFade {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(8px); }
+}
+
+/* Step 24: Modal content */
+@keyframes modalPop {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Step 25: Score pop */
+@keyframes scorePop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); color: #00ff88; }
+  100% { transform: scale(1); }
+}
+
+/* ========== ANIMATION CLASSES ========== */
+
+.animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+.animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+.animate-slide-down { animation: slideDown 0.5s ease-out forwards; }
+.animate-scale-pop { animation: scalePop 0.4s ease-out forwards; }
+.animate-float { animation: gentleFloat 3s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 0.3s ease-in-out infinite; }
+.animate-shake { animation: shake 0.15s ease-in-out infinite; }
+.animate-bob { animation: bob 2s ease-in-out infinite; }
+.animate-spin-slow { animation: spinSlow 8s linear infinite; }
+.animate-fish-swim { animation: fishSwim 1.5s ease-in-out infinite; }
+.animate-fish-to-box { animation: fishToBox 0.8s ease-in-out forwards; }
+.animate-button-press { animation: buttonPress 0.15s ease-out; }
+.animate-score-pop { animation: scorePop 0.3s ease-out; }
+.animate-backdrop { animation: backdropFade 0.3s ease-out forwards; }
+.animate-modal { animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+/* Step 26: Staggered menu items */
+.menu-item-1 { animation: menuSlideIn 0.4s ease-out 0.1s forwards; opacity: 0; }
+.menu-item-2 { animation: menuSlideIn 0.4s ease-out 0.2s forwards; opacity: 0; }
+.menu-item-3 { animation: menuSlideIn 0.4s ease-out 0.3s forwards; opacity: 0; }
+.menu-item-4 { animation: menuSlideIn 0.4s ease-out 0.4s forwards; opacity: 0; }
+
+/* ========== UI COMPONENTS ========== */
+
+/* Step 27: Glass morphism panels */
+.glass-panel {
+  background: rgba(10, 22, 40, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Step 28: Neon border */
+.neon-border {
+  border: 2px solid var(--gold);
+  box-shadow: 
+    0 0 5px var(--gold),
+    0 0 10px var(--gold),
+    inset 0 0 5px rgba(255, 215, 0, 0.1);
+}
+
+/* Step 29: Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #ffd700 0%, #ffec8b 25%, #ffd700 50%, #b8860b 75%, #ffd700 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textShimmer 3s linear infinite;
+}
+
+/* Step 30: Button styles */
+.btn-primary {
+  background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+  border: 2px solid #fff;
+  box-shadow: 
+    0 4px 0 #15803d,
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 0 #15803d,
+    0 8px 16px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 
+    0 2px 0 #15803d,
+    0 3px 8px rgba(0, 0, 0, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Step 31: Secondary button */
+.btn-secondary {
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+  border: 2px solid #93c5fd;
+  box-shadow: 
+    0 4px 0 #1e40af,
+    0 6px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-secondary:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #1e40af;
+}
+
+/* Step 32: Cast button special */
+.btn-cast {
+  background: radial-gradient(circle at 30% 30%, #4ade80 0%, #22c55e 50%, #15803d 100%);
+  border: 4px solid #fff;
+  box-shadow: 
+    0 6px 0 #14532d,
+    0 0 20px rgba(74, 222, 128, 0.4),
+    0 0 40px rgba(74, 222, 128, 0.2),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-cast:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 9px 0 #14532d,
+    0 0 30px rgba(74, 222, 128, 0.6),
+    0 0 60px rgba(74, 222, 128, 0.3);
+}
+
+.btn-cast:active:not(:disabled) {
+  transform: translateY(3px) scale(0.98);
+  box-shadow: 
+    0 3px 0 #14532d,
+    0 0 15px rgba(74, 222, 128, 0.4);
+}
+
+.btn-cast:disabled {
+  background: radial-gradient(circle at 30% 30%, #6b7280 0%, #4b5563 50%, #374151 100%);
+  box-shadow: 0 4px 0 #1f2937;
+  cursor: not-allowed;
+}
+
+/* Step 33: Reel button pulsing */
+.btn-reel {
+  background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+  border: 3px solid #fff;
+  box-shadow: 
+    0 4px 0 #1d4ed8,
+    0 0 15px rgba(59, 130, 246, 0.5),
+    0 0 30px rgba(59, 130, 246, 0.3);
+  animation: pulseGlow 0.5s ease-in-out infinite;
+}
+
+/* Step 34: Stats card */
+.stat-card {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(20, 30, 50, 0.8) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  backdrop-filter: blur(4px);
+}
+
+/* Step 35: Progress bar */
+.progress-bar {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e 0%, #4ade80 50%, #86efac 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+/* Step 36: Tension bar */
+.tension-bar {
+  height: 12px;
+  background: linear-gradient(90deg, 
+    rgba(34, 197, 94, 0.3) 0%, 
+    rgba(34, 197, 94, 0.3) 40%,
+    rgba(234, 179, 8, 0.3) 40%,
+    rgba(234, 179, 8, 0.3) 70%,
+    rgba(239, 68, 68, 0.3) 70%,
+    rgba(239, 68, 68, 0.3) 100%
+  );
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.tension-fill {
+  height: 100%;
+  transition: width 0.2s ease-out, background-color 0.2s ease;
+  border-radius: 4px;
+}
+
+.tension-safe { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.tension-warning { background: linear-gradient(90deg, #eab308, #facc15); }
+.tension-danger { background: linear-gradient(90deg, #ef4444, #f87171); animation: shake 0.1s infinite; }
+
+/* Step 37: Equipment selector */
+.equip-btn {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.equip-btn:hover {
+  transform: scale(1.1);
+  border-color: var(--gold);
+}
+
+.equip-btn.active {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: #000;
+  border-color: #fff;
+  box-shadow: 0 0 10px var(--gold);
+}
+
+.equip-btn.locked {
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+/* Step 38: Tacklebox sprite */
+.tacklebox-sprite {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.tacklebox-sprite:hover {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* Step 39: Fish grid item */
+.fish-grid-item {
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  transition: all 0.2s ease;
+}
+
+.fish-grid-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+}
+
+.fish-grid-item.unlocked {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(20, 40, 60, 0.6);
+}
+
+/* Step 40: Leaderboard entry */
+.leaderboard-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.4) 0%, rgba(20, 30, 50, 0.6) 100%);
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.leaderboard-entry:hover {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.1) 0%, rgba(20, 30, 50, 0.8) 100%);
+  border-left-color: var(--gold);
+  transform: translateX(4px);
+}
+
+.leaderboard-entry.top-3 {
+  border-left-color: var(--gold);
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(20, 30, 50, 0.7) 100%);
+}
+
+/* Step 41: Achievement badge */
+.achievement-badge {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+}
+
+.achievement-badge.locked {
+  background: rgba(0, 0, 0, 0.5);
+  filter: grayscale(1) opacity(0.4);
+}
+
+.achievement-badge.unlocked {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(88, 28, 135, 0.5) 100%);
+  border-color: #a855f7;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.achievement-badge:hover {
+  transform: scale(1.15) rotate(5deg);
+}
+
+/* Step 42: Water overlay */
+.water-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, 
+    rgba(30, 80, 130, 0.7) 0%, 
+    rgba(10, 40, 80, 0.9) 100%
+  );
+  overflow: hidden;
+}
+
+.water-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 2px,
+    transparent 40px
+  );
+  animation: waterWave 8s linear infinite;
+}
+
+/* Step 43: Sun rays */
+.sun-rays {
+  position: absolute;
+  top: 60px;
+  right: 60px;
+  width: 100px;
+  height: 100px;
+}
+
+.sun-rays::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 220, 0, 0.3) 0%, transparent 70%);
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* Step 44: Bobber styles */
+.bobber {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  transition: transform 0.1s ease;
+}
+
+.bobber.active {
+  animation: shake 0.1s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(255, 100, 100, 0.8));
+}
+
+/* Step 45: Caught fish display */
+.caught-fish {
+  animation: scalePop 0.4s ease-out, gentleFloat 2s ease-in-out 0.4s infinite;
+}
+
+/* Step 46: Message toast */
+.game-message {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(20, 30, 50, 0.95) 100%);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 12px 24px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.2);
+  animation: scalePop 0.3s ease-out;
+}
+
+/* Step 47: Menu background effects */
+.menu-bg {
+  background: 
+    radial-gradient(ellipse at 20% 80%, rgba(30, 100, 180, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 50, 100, 0.3) 0%, transparent 60%),
+    linear-gradient(180deg, #0a1628 0%, #000510 100%);
+}
+
+/* Step 48: Floating particles */
+.floating-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 215, 0, 0.6);
+  border-radius: 50%;
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+/* Step 49: Logo glow */
+.logo-glow {
+  text-shadow: 
+    0 0 10px var(--gold),
+    0 0 20px var(--gold),
+    0 0 40px rgba(255, 215, 0, 0.5),
+    0 0 80px rgba(255, 215, 0, 0.3);
+}
+
+/* Step 50: Smooth UI transitions */
+.ui-panel {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ui-panel:hover {
+  box-shadow: 0 -4px 20px rgba(255, 215, 0, 0.1);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .btn-cast {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  
+  .equip-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
 }
