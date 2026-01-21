@@ -1383,17 +1383,22 @@ export const RetroBackground = ({ stage, timeOfDay, showRain, showLightning, sea
   // Determine if sun or moon should be visible - MUTUALLY EXCLUSIVE
   const showSun = stageColors.timeOfDay === 'day';
   const showMoon = !showSun && (stageColors.timeOfDay === 'night' || stageColors.timeOfDay === 'dusk');
+  const isNight = stageColors.timeOfDay === 'night';
+  const isDusk = stageColors.timeOfDay === 'dusk';
+  
+  // Show fireflies only in summer nights
+  const showFireflies = (isNight || isDusk) && currentSeason === 'summer';
 
   // Rain effect
   useEffect(() => {
     if (showRain) {
-      setRainDrops(Array.from({ length: 100 }, (_, i) => ({
+      setRainDrops(Array.from({ length: 120 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        speed: 4 + Math.random() * 5,
-        length: 12 + Math.random() * 18,
-        opacity: 0.3 + Math.random() * 0.4,
+        speed: 5 + Math.random() * 6,
+        length: 15 + Math.random() * 20,
+        opacity: 0.4 + Math.random() * 0.4,
       })));
     } else {
       setRainDrops([]);
@@ -1406,7 +1411,7 @@ export const RetroBackground = ({ stage, timeOfDay, showRain, showLightning, sea
       setRainDrops(prev => prev.map(d => ({ 
         ...d, 
         y: (d.y + d.speed) % 130,
-        x: d.x + 0.3, // Slight wind
+        x: d.x + 0.4, // Wind effect
       })));
     }, 25);
     return () => clearInterval(interval);
@@ -1442,28 +1447,46 @@ export const RetroBackground = ({ stage, timeOfDay, showRain, showLightning, sea
             ${stageColors.waterColors[0]} 100%)` 
         }}
       />
+      
+      {/* Distant horizon/mountains */}
+      <DistantHorizon stage={stage} season={currentSeason} />
 
       {/* Sun - only visible during day */}
       <AnimatedSun visible={showSun} stage={stage} />
       
+      {/* Lens flare for sunny days */}
+      <LensFlare visible={showSun && stage === 0} />
+      
       {/* Moon - only visible during night/dusk */}
-      <AnimatedMoon visible={showMoon && !showSun} phase={0.75} />
+      <AnimatedMoon visible={showMoon} phase={0.75} />
       
       {/* Stars - only at night */}
-      <TwinklingStars visible={stageColors.timeOfDay === 'night'} count={60} />
+      <TwinklingStars visible={isNight} count={70} />
+      
+      {/* Shooting stars at night */}
+      <ShootingStars visible={isNight} />
       
       {/* Animated clouds */}
       <AnimatedClouds 
-        count={stage === 3 ? 10 : 6} 
-        speed={stage === 3 ? 2 : 1} 
+        count={stage === 3 ? 12 : 7} 
+        speed={stage === 3 ? 2.5 : 1} 
         stage={stage}
       />
 
-      {/* Enhanced water */}
+      {/* Enhanced water with fish shadows */}
       <EnhancedWater stage={stage} season={currentSeason} />
+      
+      {/* Floating debris / lily pads for calm waters */}
+      <FloatingDebris stage={stage} season={currentSeason} />
+      
+      {/* Underwater bubbles near fishing area */}
+      <UnderwaterBubbles active={true} />
 
       {/* Seasonal particles */}
-      <SeasonalParticles season={currentSeason} count={currentSeason === 'winter' ? 35 : 18} />
+      <SeasonalParticles season={currentSeason} count={currentSeason === 'winter' ? 40 : 22} />
+      
+      {/* Fireflies for summer nights */}
+      <Fireflies visible={showFireflies} count={18} />
 
       {/* Rain - Enhanced visibility */}
       {showRain && (
@@ -1510,7 +1533,15 @@ export const RetroBackground = ({ stage, timeOfDay, showRain, showLightning, sea
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.2) 100%)',
+          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.25) 100%)',
+        }}
+      />
+      
+      {/* Film grain overlay for atmosphere */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }}
       />
     </div>
