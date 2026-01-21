@@ -148,6 +148,13 @@ function App() {
   // Menu animation states
   const [menuAnimated, setMenuAnimated] = useState(false);
   
+  // ========== NEURON ACTIVATION STATES ==========
+  const [screenShake, setScreenShake] = useState(false);
+  const [comboFlash, setComboFlash] = useState(false);
+  const [pointsPopup, setPointsPopup] = useState(null);
+  const [streakFire, setStreakFire] = useState(false);
+  const [rareCatchGlow, setRareCatchGlow] = useState(false);
+  
   const biteTimeoutRef = useRef(null);
   const bobberAnimRef = useRef(null);
   const fishAnimRef = useRef(null);
