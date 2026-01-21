@@ -410,6 +410,35 @@ function App() {
     let points = Math.round(fish.points * (1 + store.combo * 0.1));
     if (perfect) { points *= 2; store.incrementPerfectCatches(); retroSounds.perfect(); }
     
+    // ========== NEURON ACTIVATION: VISUAL FEEDBACK ==========
+    
+    // Screen shake on catch
+    setScreenShake(true);
+    setTimeout(() => setScreenShake(false), 300);
+    
+    // Points popup
+    setPointsPopup({ points, perfect, x: 50, y: 40 });
+    setTimeout(() => setPointsPopup(null), 1500);
+    
+    // Combo flash effect
+    if (store.combo >= 2) {
+      setComboFlash(true);
+      retroSounds.combo(store.combo + 1);
+      setTimeout(() => setComboFlash(false), 200);
+    }
+    
+    // Streak fire for 5+ combo
+    if (store.combo >= 4) {
+      setStreakFire(true);
+      setTimeout(() => setStreakFire(false), 2000);
+    }
+    
+    // Rare catch glow for rare fish
+    if (fish.rarity >= 0.7) {
+      setRareCatchGlow(true);
+      setTimeout(() => setRareCatchGlow(false), 1500);
+    }
+    
     // Show cutscene
     setCutsceneData({ fish, isPerfect: perfect, points });
     setShowCutscene(true);
