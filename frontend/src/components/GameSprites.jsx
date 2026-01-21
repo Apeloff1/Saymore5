@@ -878,12 +878,7 @@ export const PixelBobber = memo(({ isActive, wobble = false }) => (
     <ellipse cx="14" cy="14" rx="3.5" ry="2.5" fill="#FFAAAA" opacity="0.7" />
     <circle cx="13" cy="13" r="1.5" fill="#FFF" opacity="0.45" />
     
-    {isActive && (
-      <>
-        <circle cx="18" cy="18" r="16" stroke="#00AAFF" strokeWidth="2" fill="none" className="bobber-ring ring-1" />
-        <circle cx="18" cy="18" r="20" stroke="#00AAFF" strokeWidth="1.5" fill="none" className="bobber-ring ring-2" />
-      </>
-    )}
+    {/* Target rings removed - they disturbed the feel */}
   </svg>
 ));
 
