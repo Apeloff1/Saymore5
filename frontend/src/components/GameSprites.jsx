@@ -451,7 +451,7 @@ const EnhancedWater = memo(({ stage, season }) => {
   }, []);
   
   return (
-    <div className="absolute bottom-0 left-0 right-0 water-container" style={{ height: '45%' }}>
+    <div className="absolute bottom-0 left-0 right-0 water-container" style={{ height: '45%', zIndex: 10 }}>
       {/* Base water gradient */}
       <div 
         className="absolute inset-0"
