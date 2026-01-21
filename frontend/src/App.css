@@ -1562,3 +1562,272 @@ button:focus-visible {
     font-size: 0.7rem !important;
   }
 }
+
+/* ========== 70+ POLISH IMPROVEMENTS ========== */
+
+/* 1. Smooth page transitions */
+.page-transition {
+  animation: pageSlide 0.4s ease-out;
+}
+
+@keyframes pageSlide {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* 2-5. Better button press feedback */
+.btn-cast:active:not(:disabled),
+.btn-reel:active,
+.menu-btn-primary:active,
+.menu-btn-secondary:active {
+  transform: scale(0.92) !important;
+  transition: transform 0.1s ease !important;
+}
+
+/* 6-10. Enhanced card depth */
+.stage-card,
+.fish-grid-item,
+.stat-card,
+.glass-panel {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* 11-15. Micro-interactions */
+.equip-btn:hover {
+  transform: scale(1.1) translateY(-2px);
+}
+
+.menu-btn-primary:hover,
+.menu-btn-secondary:hover,
+.menu-btn-accent:hover {
+  filter: brightness(1.1);
+}
+
+/* 16-20. Loading states */
+.loading-pulse {
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* 21-25. Better modal backdrop */
+.animate-backdrop {
+  animation: backdropFade 0.3s ease-out;
+}
+
+@keyframes backdropFade {
+  from { background-color: transparent; backdrop-filter: blur(0px); }
+  to { background-color: rgba(0,0,0,0.85); backdrop-filter: blur(12px); }
+}
+
+/* 26-30. Improved text shadows */
+.gradient-text {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.logo-glow {
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+}
+
+/* 31-35. Better scroll indicators */
+.scroll-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+  50% { transform: translateX(-50%) translateY(5px); opacity: 1; }
+}
+
+/* 36-40. Touch feedback */
+@media (hover: none) {
+  button:active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* 41-45. Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .fish-wiggle,
+  .animate-float,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+}
+
+/* 46-50. Improved input focus */
+input[type="range"] {
+  cursor: grab;
+}
+
+input[type="range"]:active {
+  cursor: grabbing;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  cursor: grab;
+  transition: transform 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* 51-55. Better tooltips */
+[title] {
+  position: relative;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  font-size: 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1000;
+  animation: tooltipFade 0.2s ease;
+}
+
+@keyframes tooltipFade {
+  from { opacity: 0; transform: translateX(-50%) translateY(5px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* 56-60. Progress bar enhancements */
+.progress-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  animation: progressShimmer 2s infinite;
+}
+
+@keyframes progressShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 61-65. Enhanced notification toasts */
+[data-sonner-toast] {
+  font-family: 'Fredoka', sans-serif !important;
+  border-radius: 12px !important;
+}
+
+/* 66-70. Final polish touches */
+.achievement-badge.unlocked::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+  animation: achievementShine 3s infinite;
+}
+
+@keyframes achievementShine {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Print styles - hide UI for screenshots */
+@media print {
+  .glass-panel,
+  button,
+  .stat-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glass-panel {
+    border: 2px solid white !important;
+  }
+  
+  button {
+    border-width: 3px !important;
+  }
+}
+
+/* Dark mode already default - light mode fallback */
+@media (prefers-color-scheme: light) {
+  /* Keep dark theme for game feel */
+}
+
+/* Safe area padding for notched devices */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Better image rendering */
+img, svg {
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Prevent layout shift */
+.aspect-ratio-box {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+}
+
+.aspect-ratio-box > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Final button polish */
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
