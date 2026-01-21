@@ -1037,7 +1037,19 @@
 
 /* ========== FISH & BOBBER ========== */
 .fish-wiggle {
-  animation: fishWiggle 0.4s ease-in-out infinite;
+  animation: fishWiggle 0.5s ease-in-out infinite;
+}
+
+/* Menu fish wiggle - more playful */
+.fish-wiggle {
+  animation: menuFishWiggle 0.8s ease-in-out infinite;
+}
+
+@keyframes menuFishWiggle {
+  0%, 100% { transform: rotate(-8deg) translateY(0); }
+  25% { transform: rotate(8deg) translateY(-5px); }
+  50% { transform: rotate(-8deg) translateY(0); }
+  75% { transform: rotate(8deg) translateY(5px); }
 }
 
 .bobber-bob {
@@ -1046,14 +1058,6 @@
 
 .bobber-shake {
   animation: bobberShake 0.1s ease-in-out infinite;
-}
-
-.bobber-ring {
-  animation: bobberRing 1s ease-out infinite;
-}
-
-.bobber-ring.ring-2 {
-  animation-delay: 0.2s;
 }
 
 @keyframes fishWiggle {
@@ -1070,11 +1074,6 @@
   0%, 100% { transform: translateX(0) rotate(0deg); }
   25% { transform: translateX(-4px) rotate(-3deg); }
   75% { transform: translateX(4px) rotate(3deg); }
-}
-
-@keyframes bobberRing {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(1.8); opacity: 0; }
 }
 
 .splash-anim {
