@@ -166,6 +166,16 @@ function App() {
     return () => clearAllTimers();
   }, []);
   
+  // Move all useMemo hooks to the top to avoid conditional hook calls
+  const gameContainerClass = useMemo(() => {
+    let classes = 'h-screen flex flex-col bg-black overflow-hidden';
+    if (screenShake) classes += ' screen-shake';
+    if (comboFlash) classes += ' combo-flash';
+    if (streakFire) classes += ' streak-fire';
+    if (rareCatchGlow) classes += ' rare-glow';
+    return classes;
+  }, [screenShake, comboFlash, streakFire, rareCatchGlow]);
+  
   // Menu animation trigger
   useEffect(() => {
     if (store.gameState === 'menu' && !menuAnimated) {
