@@ -1374,22 +1374,27 @@ button:hover:not(:disabled) {
   50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
 }
 
-/* ========== BUTTON TEXT FIT ========== */
+/* ========== BUTTON TEXT FIT - SMALLER FONTS ========== */
 
 .btn-cast {
-  font-size: 0.65rem !important;
-  line-height: 1.2;
-  padding: 4px;
+  font-size: 0.5rem !important;
+  line-height: 1.1;
+  padding: 2px;
 }
 
 .btn-cast span {
   display: block;
   max-width: 100%;
   word-break: break-word;
+  font-size: inherit;
 }
 
 .btn-reel {
-  font-size: 0.6rem !important;
+  font-size: 0.45rem !important;
+}
+
+.btn-reel span {
+  font-size: inherit;
 }
 
 /* ========== BOBBER HIDING - Behind water ========== */
