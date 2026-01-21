@@ -902,16 +902,6 @@ function App() {
   const stageData = STAGES[store.currentStage];
   const tensionLevel = store.tension > 0.7 ? 'danger' : store.tension > 0.4 ? 'warning' : 'safe';
   
-  // Compute screen shake class
-  const gameContainerClass = useMemo(() => {
-    let classes = 'h-screen flex flex-col bg-black overflow-hidden';
-    if (screenShake) classes += ' screen-shake';
-    if (comboFlash) classes += ' combo-flash';
-    if (streakFire) classes += ' streak-fire';
-    if (rareCatchGlow) classes += ' rare-glow';
-    return classes;
-  }, [screenShake, comboFlash, streakFire, rareCatchGlow]);
-  
   return (
     <div className={gameContainerClass} data-testid="game-screen">
       <Toaster position="top-center" richColors />
