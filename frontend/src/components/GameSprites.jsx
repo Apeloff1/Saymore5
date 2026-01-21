@@ -676,6 +676,7 @@ export const AnimatedIsland = ({ season = 'summer', side = 'right' }) => {
 const EnhancedWater = ({ stage, season }) => {
   const [wavePhase, setWavePhase] = useState(0);
   const [ripples, setRipples] = useState([]);
+  const [fishShadows, setFishShadows] = useState([]);
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -684,18 +685,45 @@ const EnhancedWater = ({ stage, season }) => {
     return () => clearInterval(interval);
   }, []);
   
+  // Initialize fish shadows swimming under water
+  useEffect(() => {
+    const shadows = Array.from({ length: 8 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: 20 + Math.random() * 60,
+      size: 15 + Math.random() * 25,
+      speed: 0.1 + Math.random() * 0.15,
+      direction: Math.random() > 0.5 ? 1 : -1,
+      depth: 0.1 + Math.random() * 0.25,
+    }));
+    setFishShadows(shadows);
+  }, []);
+  
+  // Animate fish shadows
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFishShadows(prev => prev.map(fish => ({
+        ...fish,
+        x: fish.direction > 0 
+          ? (fish.x > 105 ? -5 : fish.x + fish.speed)
+          : (fish.x < -5 ? 105 : fish.x - fish.speed),
+      })));
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+  
   // Random ripples
   useEffect(() => {
     const interval = setInterval(() => {
-      if (Math.random() > 0.7) {
-        setRipples(prev => [...prev.slice(-5), {
+      if (Math.random() > 0.6) {
+        setRipples(prev => [...prev.slice(-8), {
           id: Date.now(),
           x: 10 + Math.random() * 80,
           y: 5 + Math.random() * 35,
           age: 0,
         }]);
       }
-    }, 1000);
+    }, 800);
     return () => clearInterval(interval);
   }, []);
   
@@ -717,6 +745,27 @@ const EnhancedWater = ({ stage, season }) => {
           background: `linear-gradient(180deg, ${stageColors.waterColors[0]} 0%, ${stageColors.waterColors[1]} 100%)` 
         }}
       />
+      
+      {/* Fish shadows swimming */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {fishShadows.map(fish => (
+          <div
+            key={fish.id}
+            className="absolute transition-none"
+            style={{
+              left: `${fish.x}%`,
+              top: `${fish.y}%`,
+              opacity: fish.depth,
+              transform: `scaleX(${fish.direction})`,
+            }}
+          >
+            <svg width={fish.size} height={fish.size * 0.6} viewBox="0 0 40 24">
+              <ellipse cx="18" cy="12" rx="14" ry="9" fill="#000" opacity="0.5" />
+              <path d="M 30 12 L 40 6 L 38 12 L 40 18 Z" fill="#000" opacity="0.5" />
+            </svg>
+          </div>
+        ))}
+      </div>
       
       {/* Animated wave layers */}
       <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
@@ -760,38 +809,93 @@ const EnhancedWater = ({ stage, season }) => {
           );
         })}
         
+        {/* Foam lines at surface */}
+        {[...Array(4)].map((_, i) => (
+          <path
+            key={`foam-${i}`}
+            d={`M ${(wavePhase * 20 + i * 300) % 1400 - 200} ${2 + i * 2} 
+                Q ${(wavePhase * 20 + i * 300 + 50) % 1400 - 200} ${4 + i * 2} 
+                  ${(wavePhase * 20 + i * 300 + 100) % 1400 - 200} ${2 + i * 2}`}
+            stroke="rgba(255,255,255,0.15)"
+            strokeWidth={3 - i * 0.5}
+            fill="none"
+            strokeLinecap="round"
+          />
+        ))}
+        
         {/* Sparkle reflections */}
-        {[...Array(15)].map((_, i) => {
-          const sparkleOpacity = 0.1 + Math.sin(wavePhase * 2 + i * 0.7) * 0.15;
+        {[...Array(20)].map((_, i) => {
+          const sparkleOpacity = 0.08 + Math.sin(wavePhase * 2 + i * 0.7) * 0.12;
+          const sparkleSize = 2 + Math.sin(wavePhase + i) * 1.5;
           return (
             <ellipse
               key={`sparkle-${i}`}
-              cx={50 + i * 70 + Math.sin(wavePhase + i) * 20}
-              cy={20 + (i % 4) * 25 + Math.sin(wavePhase * 0.5 + i) * 5}
-              rx={3 + Math.sin(wavePhase + i) * 2}
-              ry={1.5}
+              cx={40 + i * 55 + Math.sin(wavePhase + i) * 15}
+              cy={15 + (i % 5) * 22 + Math.sin(wavePhase * 0.5 + i) * 4}
+              rx={sparkleSize}
+              ry={sparkleSize * 0.5}
               fill="white"
               opacity={sparkleOpacity}
             />
           );
         })}
+        
+        {/* Light beams in water */}
+        {[...Array(5)].map((_, i) => (
+          <path
+            key={`beam-${i}`}
+            d={`M ${150 + i * 200} 0 L ${120 + i * 200} 100 L ${180 + i * 200} 100 Z`}
+            fill="rgba(255,255,255,0.02)"
+            opacity={0.5 + Math.sin(wavePhase * 0.3 + i) * 0.3}
+          />
+        ))}
       </svg>
       
       {/* Ripple effects */}
       {ripples.map(ripple => (
         <div
           key={ripple.id}
-          className="absolute rounded-full border border-white"
+          className="absolute pointer-events-none"
           style={{
             left: `${ripple.x}%`,
             top: `${ripple.y}%`,
-            width: ripple.age * 2,
-            height: ripple.age * 0.8,
-            opacity: Math.max(0, 0.3 - ripple.age * 0.005),
             transform: 'translate(-50%, -50%)',
           }}
-        />
+        >
+          <div
+            className="rounded-full border-2 border-white"
+            style={{
+              width: ripple.age * 3,
+              height: ripple.age * 1.2,
+              opacity: Math.max(0, 0.4 - ripple.age * 0.007),
+            }}
+          />
+          <div
+            className="absolute top-1/2 left-1/2 rounded-full border border-white"
+            style={{
+              width: ripple.age * 2,
+              height: ripple.age * 0.8,
+              opacity: Math.max(0, 0.25 - ripple.age * 0.004),
+              transform: 'translate(-50%, -50%)',
+            }}
+          />
+        </div>
       ))}
+      
+      {/* Underwater caustics effect */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-10"
+        style={{
+          background: `repeating-conic-gradient(
+            from ${wavePhase * 30}deg,
+            transparent 0deg,
+            rgba(255,255,255,0.1) 5deg,
+            transparent 10deg
+          )`,
+          backgroundSize: '200px 200px',
+          mixBlendMode: 'overlay',
+        }}
+      />
       
       {/* Surface shine gradient */}
       <div 
@@ -799,10 +903,379 @@ const EnhancedWater = ({ stage, season }) => {
         style={{
           background: `linear-gradient(${170 + Math.sin(wavePhase * 0.5) * 10}deg, 
             transparent 30%, 
-            rgba(255,255,255,0.08) 50%, 
+            rgba(255,255,255,0.06) 50%, 
             transparent 70%)`,
         }}
       />
+      
+      {/* Depth gradient overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.15) 100%)',
+        }}
+      />
+    </div>
+  );
+};
+
+// ========== IMPROVEMENT 51-60: DISTANT MOUNTAINS/HORIZON ==========
+const DistantHorizon = ({ stage, season }) => {
+  const stageColors = getStageColors(stage, season);
+  const isNight = stageColors.timeOfDay === 'night';
+  
+  return (
+    <div className="absolute bottom-[45%] left-0 right-0 h-20 pointer-events-none">
+      <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1200 80">
+        {/* Distant mountains layer 1 */}
+        <path
+          d="M 0 80 L 0 60 L 100 45 L 200 55 L 300 35 L 400 50 L 500 30 L 600 45 L 700 38 L 800 52 L 900 42 L 1000 55 L 1100 40 L 1200 50 L 1200 80 Z"
+          fill={isNight ? 'rgba(20, 30, 50, 0.4)' : 'rgba(100, 130, 160, 0.25)'}
+        />
+        {/* Distant mountains layer 2 */}
+        <path
+          d="M 0 80 L 0 65 L 150 52 L 250 60 L 350 48 L 450 58 L 550 45 L 650 55 L 750 50 L 850 60 L 950 52 L 1050 62 L 1150 55 L 1200 58 L 1200 80 Z"
+          fill={isNight ? 'rgba(30, 45, 70, 0.35)' : 'rgba(130, 160, 190, 0.2)'}
+        />
+        {/* Horizon mist */}
+        <rect x="0" y="60" width="1200" height="20" fill="url(#horizonMist)" />
+        <defs>
+          <linearGradient id="horizonMist" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={isNight ? 'rgba(50, 70, 100, 0.3)' : 'rgba(200, 220, 240, 0.4)'} />
+            <stop offset="100%" stopColor="transparent" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  );
+};
+
+// ========== IMPROVEMENT 61-70: FLOATING DEBRIS/LILY PADS ==========
+const FloatingDebris = ({ stage, season }) => {
+  const [debris, setDebris] = useState([]);
+  const [phase, setPhase] = useState(0);
+  
+  useEffect(() => {
+    // Only show in lake and river stages
+    if (stage > 1) return;
+    
+    const items = Array.from({ length: 6 }, (_, i) => ({
+      id: i,
+      x: 15 + Math.random() * 70,
+      y: Math.random() * 30,
+      type: ['lilypad', 'leaf', 'twig', 'flower'][Math.floor(Math.random() * 4)],
+      size: 20 + Math.random() * 20,
+      rotation: Math.random() * 360,
+      rotationSpeed: (Math.random() - 0.5) * 0.5,
+      bobOffset: Math.random() * Math.PI * 2,
+    }));
+    setDebris(items);
+  }, [stage]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPhase(prev => prev + 0.05);
+      setDebris(prev => prev.map(d => ({
+        ...d,
+        rotation: d.rotation + d.rotationSpeed,
+        x: d.x + 0.01,
+      })));
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+  
+  if (stage > 1) return null;
+  
+  return (
+    <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ height: '45%' }}>
+      {debris.map(item => {
+        const bob = Math.sin(phase + item.bobOffset) * 3;
+        
+        return (
+          <div
+            key={item.id}
+            className="absolute"
+            style={{
+              left: `${item.x}%`,
+              top: `${item.y + 5}%`,
+              transform: `rotate(${item.rotation}deg) translateY(${bob}px)`,
+            }}
+          >
+            {item.type === 'lilypad' && (
+              <svg width={item.size} height={item.size * 0.7} viewBox="0 0 40 28">
+                <ellipse cx="20" cy="14" rx="18" ry="12" fill="#228B22" opacity="0.8" />
+                <ellipse cx="20" cy="14" rx="15" ry="10" fill="#2E7D32" opacity="0.6" />
+                <path d="M 20 2 L 20 14" stroke="#1B5E20" strokeWidth="1" opacity="0.5" />
+                <path d="M 20 14 L 8 20" stroke="#1B5E20" strokeWidth="0.5" opacity="0.3" />
+                <path d="M 20 14 L 32 20" stroke="#1B5E20" strokeWidth="0.5" opacity="0.3" />
+                {season === 'spring' && (
+                  <>
+                    <circle cx="25" cy="10" r="4" fill="#FF69B4" />
+                    <circle cx="25" cy="10" r="2" fill="#FFD700" />
+                  </>
+                )}
+              </svg>
+            )}
+            {item.type === 'leaf' && (
+              <svg width={item.size * 0.6} height={item.size * 0.4} viewBox="0 0 24 16">
+                <path d="M 2 8 Q 12 2 22 8 Q 12 14 2 8" fill={season === 'autumn' ? '#CD853F' : '#4CAF50'} opacity="0.7" />
+                <line x1="2" y1="8" x2="22" y2="8" stroke={season === 'autumn' ? '#8B4513' : '#2E7D32'} strokeWidth="0.5" opacity="0.5" />
+              </svg>
+            )}
+            {item.type === 'twig' && (
+              <svg width={item.size * 0.8} height={item.size * 0.3} viewBox="0 0 32 12">
+                <line x1="2" y1="6" x2="30" y2="6" stroke="#8B4513" strokeWidth="2" strokeLinecap="round" />
+                <line x1="10" y1="6" x2="8" y2="2" stroke="#8B4513" strokeWidth="1" strokeLinecap="round" />
+                <line x1="20" y1="6" x2="22" y2="10" stroke="#8B4513" strokeWidth="1" strokeLinecap="round" />
+              </svg>
+            )}
+            {item.type === 'flower' && season === 'spring' && (
+              <svg width={item.size * 0.5} height={item.size * 0.5} viewBox="0 0 20 20">
+                <circle cx="10" cy="6" r="4" fill="#FFB7C5" opacity="0.8" />
+                <circle cx="6" cy="10" r="4" fill="#FFC0CB" opacity="0.8" />
+                <circle cx="14" cy="10" r="4" fill="#FFB6C1" opacity="0.8" />
+                <circle cx="10" cy="14" r="4" fill="#FF69B4" opacity="0.8" />
+                <circle cx="10" cy="10" r="3" fill="#FFD700" />
+              </svg>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// ========== IMPROVEMENT 71-80: UNDERWATER BUBBLES ==========
+const UnderwaterBubbles = ({ active = true }) => {
+  const [bubbles, setBubbles] = useState([]);
+  
+  useEffect(() => {
+    if (!active) return;
+    
+    const interval = setInterval(() => {
+      if (Math.random() > 0.7) {
+        setBubbles(prev => [...prev.slice(-15), {
+          id: Date.now(),
+          x: 45 + Math.random() * 10,
+          y: 100,
+          size: 3 + Math.random() * 6,
+          speed: 0.8 + Math.random() * 0.5,
+          wobble: Math.random() * Math.PI * 2,
+        }]);
+      }
+    }, 200);
+    return () => clearInterval(interval);
+  }, [active]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBubbles(prev => prev
+        .map(b => ({
+          ...b,
+          y: b.y - b.speed,
+          x: b.x + Math.sin(b.wobble + b.y * 0.1) * 0.3,
+        }))
+        .filter(b => b.y > 50)
+      );
+    }, 30);
+    return () => clearInterval(interval);
+  }, []);
+  
+  return (
+    <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-25" style={{ height: '50%' }}>
+      {bubbles.map(bubble => (
+        <div
+          key={bubble.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${bubble.x}%`,
+            top: `${bubble.y}%`,
+            width: bubble.size,
+            height: bubble.size,
+            background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, rgba(135,206,235,0.4) 50%, rgba(135,206,235,0.2) 100%)',
+            border: '1px solid rgba(255,255,255,0.3)',
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// ========== IMPROVEMENT 81-90: LENS FLARE ==========
+const LensFlare = ({ visible, position = 'top-right' }) => {
+  const [intensity, setIntensity] = useState(0.7);
+  
+  useEffect(() => {
+    if (!visible) return;
+    const interval = setInterval(() => {
+      setIntensity(0.6 + Math.random() * 0.3);
+    }, 100);
+    return () => clearInterval(interval);
+  }, [visible]);
+  
+  if (!visible) return null;
+  
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Main flare */}
+      <div
+        className="absolute top-8 right-24"
+        style={{
+          width: 150,
+          height: 150,
+          background: `radial-gradient(circle, rgba(255,255,200,${intensity * 0.3}) 0%, rgba(255,200,100,${intensity * 0.15}) 30%, transparent 70%)`,
+        }}
+      />
+      {/* Secondary flares */}
+      {[
+        { x: '60%', y: '25%', size: 30, color: 'rgba(255,180,100,0.2)' },
+        { x: '50%', y: '35%', size: 15, color: 'rgba(100,200,255,0.15)' },
+        { x: '40%', y: '45%', size: 50, color: 'rgba(255,220,150,0.1)' },
+        { x: '35%', y: '50%', size: 20, color: 'rgba(255,150,100,0.12)' },
+      ].map((flare, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: flare.x,
+            top: flare.y,
+            width: flare.size,
+            height: flare.size,
+            background: `radial-gradient(circle, ${flare.color} 0%, transparent 70%)`,
+            opacity: intensity,
+          }}
+        />
+      ))}
+      {/* Light streak */}
+      <div
+        className="absolute top-12 right-20"
+        style={{
+          width: 200,
+          height: 3,
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,200,0.3) 50%, transparent 100%)',
+          transform: 'rotate(-30deg)',
+          opacity: intensity * 0.5,
+        }}
+      />
+    </div>
+  );
+};
+
+// ========== IMPROVEMENT 91-100: SHOOTING STAR ==========
+const ShootingStars = ({ visible }) => {
+  const [stars, setStars] = useState([]);
+  
+  useEffect(() => {
+    if (!visible) return;
+    
+    const interval = setInterval(() => {
+      if (Math.random() > 0.95) {
+        setStars(prev => [...prev.slice(-3), {
+          id: Date.now(),
+          startX: 10 + Math.random() * 60,
+          startY: 5 + Math.random() * 20,
+          length: 80 + Math.random() * 60,
+          angle: 20 + Math.random() * 30,
+          duration: 0.5 + Math.random() * 0.5,
+          progress: 0,
+        }]);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [visible]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStars(prev => prev
+        .map(s => ({ ...s, progress: s.progress + 0.05 }))
+        .filter(s => s.progress < 1)
+      );
+    }, 30);
+    return () => clearInterval(interval);
+  }, []);
+  
+  if (!visible) return null;
+  
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      {stars.map(star => {
+        const x = star.startX + star.progress * star.length * Math.cos(star.angle * Math.PI / 180);
+        const y = star.startY + star.progress * star.length * Math.sin(star.angle * Math.PI / 180);
+        const opacity = star.progress < 0.5 ? star.progress * 2 : (1 - star.progress) * 2;
+        
+        return (
+          <div
+            key={star.id}
+            className="absolute"
+            style={{
+              left: `${star.startX}%`,
+              top: `${star.startY}%`,
+              width: star.length,
+              height: 2,
+              background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,${opacity}) 50%, white ${100 - star.progress * 100}%)`,
+              transform: `rotate(${star.angle}deg)`,
+              transformOrigin: 'left center',
+              boxShadow: `0 0 10px rgba(255,255,255,${opacity * 0.5})`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+// ========== IMPROVEMENT 101-110: FIREFLIES (SUMMER NIGHT) ==========
+const Fireflies = ({ visible, count = 15 }) => {
+  const [fireflies, setFireflies] = useState([]);
+  
+  useEffect(() => {
+    if (!visible) return;
+    
+    const flies = Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: 10 + Math.random() * 80,
+      y: 30 + Math.random() * 50,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.02 + Math.random() * 0.02,
+      glowPhase: Math.random() * Math.PI * 2,
+    }));
+    setFireflies(flies);
+  }, [visible, count]);
+  
+  const [tick, setTick] = useState(0);
+  
+  useEffect(() => {
+    if (!visible) return;
+    const interval = setInterval(() => {
+      setTick(prev => prev + 0.05);
+    }, 50);
+    return () => clearInterval(interval);
+  }, [visible]);
+  
+  if (!visible) return null;
+  
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      {fireflies.map(fly => {
+        const x = fly.x + Math.sin(tick * fly.speed * 50 + fly.phase) * 10;
+        const y = fly.y + Math.cos(tick * fly.speed * 30 + fly.phase) * 8;
+        const glow = 0.3 + Math.sin(tick * 3 + fly.glowPhase) * 0.7;
+        
+        return (
+          <div
+            key={fly.id}
+            className="absolute rounded-full"
+            style={{
+              left: `${x}%`,
+              top: `${y}%`,
+              width: 6,
+              height: 6,
+              background: `radial-gradient(circle, rgba(255,255,150,${glow}) 0%, rgba(200,255,100,${glow * 0.5}) 50%, transparent 100%)`,
+              boxShadow: `0 0 ${10 + glow * 10}px rgba(255,255,100,${glow})`,
+            }}
+          />
+        );
+      })}
     </div>
   );
 };
