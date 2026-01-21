@@ -257,6 +257,52 @@ const ExpansionShop = ({ onClose, onPurchase, purchasedItems = {} }) => {
             </div>
           )}
           
+          {/* Bobbers Tab */}
+          {activeTab === 'bobbers' && (
+            <div>
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-bold text-red-400">🔴 15 PREMIUM BOBBERS</h3>
+                <p className="text-white/60 text-xs">Better visibility and sensitivity</p>
+              </div>
+              
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                {EXPANSION_BOBBERS.map(bobber => (
+                  <button
+                    key={bobber.id}
+                    onClick={() => bobber.price > 0 && addToCart(bobber, 'bobber')}
+                    className={`p-3 rounded-xl border-2 transition-all text-center ${
+                      bobber.price === 0 
+                        ? 'bg-green-900/30 border-green-500/50 cursor-default' 
+                        : 'bg-white/5 border-white/20 hover:border-red-400 hover:bg-red-500/10 cursor-pointer'
+                    } ${bobber.legendary ? 'ring-2 ring-yellow-400 animate-pulse' : ''}`}
+                    data-testid={`bobber-${bobber.id}`}
+                  >
+                    <div 
+                      className={`w-8 h-8 mx-auto rounded-full mb-1 ${bobber.glow ? 'animate-pulse' : ''}`}
+                      style={{ 
+                        backgroundColor: bobber.color,
+                        boxShadow: bobber.glow ? `0 0 15px ${bobber.color}80` : 'none',
+                        background: bobber.rainbow ? 'linear-gradient(45deg, red, orange, yellow, green, blue, purple)' : bobber.color,
+                      }}
+                    />
+                    <p className="text-[9px] text-white font-medium truncate">{bobber.name}</p>
+                    <div className="flex justify-center gap-1 mt-1 text-[8px]">
+                      <span className="text-cyan-400">V:{bobber.visibility}</span>
+                      <span className="text-green-400">S:{bobber.sensitivity}</span>
+                    </div>
+                    <p className="text-[9px] mt-1 font-bold">
+                      {bobber.price === 0 ? (
+                        <span className="text-green-400">✓ FREE</span>
+                      ) : (
+                        <span className="text-yellow-400">${bobber.price}</span>
+                      )}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          
           {/* Lines Tab */}
           {activeTab === 'lines' && (
             <div>
