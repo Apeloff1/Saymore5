@@ -861,9 +861,9 @@ export const RetroBackground = ({ stage, timeOfDay, showRain, showLightning, sea
   const [rainDrops, setRainDrops] = useState([]);
   const [lightningFlash, setLightningFlash] = useState(false);
 
-  // Determine if sun or moon should be visible
+  // Determine if sun or moon should be visible - MUTUALLY EXCLUSIVE
   const showSun = stageColors.timeOfDay === 'day';
-  const showMoon = stageColors.timeOfDay === 'night' || stageColors.timeOfDay === 'dusk';
+  const showMoon = !showSun && (stageColors.timeOfDay === 'night' || stageColors.timeOfDay === 'dusk');
 
   // Rain effect
   useEffect(() => {
