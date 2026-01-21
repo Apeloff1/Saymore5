@@ -1378,7 +1378,7 @@ function App() {
               className="btn-cast w-24 h-24 md:w-28 md:h-28 rounded-full font-bold text-white btn-smooth flex items-center justify-center" 
               data-testid="cast-button"
             >
-              <span className="font-pixel text-xs md:text-sm leading-none">
+              <span className="font-pixel text-[8px] md:text-[10px] leading-none">
                 {store.fishingState === 'idle' ? 'CAST' : store.fishingState === 'waiting' ? '...' : store.fishingState.toUpperCase()}
               </span>
             </button>
@@ -1390,7 +1390,7 @@ function App() {
                 data-testid="reel-button"
               >
                 <span className="text-base">🎣</span>
-                <span className="font-pixel text-xs">REEL!</span>
+                <span className="font-pixel text-[7px] md:text-[9px]">REEL!</span>
               </button>
             )}
           </div>
