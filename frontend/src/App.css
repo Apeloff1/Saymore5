@@ -519,6 +519,17 @@
   animation: scalePop 0.5s ease-out, gentleFloat 2.5s ease-in-out 0.5s infinite;
 }
 
+.game-message {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.92) 0%, rgba(20, 35, 60, 0.96) 100%);
+  border: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 14px 28px;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.55),
+    0 0 25px rgba(255, 215, 0, 0.25);
+  animation: scalePop 0.35s ease-out;
+}
+
 /* ========== SPRITE ANIMATIONS ========== */
 
 /* GPU Acceleration */
