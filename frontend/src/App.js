@@ -881,6 +881,17 @@ function App() {
                 <span className="text-xs">SETTINGS</span>
               </button>
             </div>
+            
+            {/* EXPANSION SHOP BUTTON */}
+            <button 
+              onClick={() => { retroSounds.select(); setShowExpansionShop(true); }}
+              className="w-full h-14 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-400 hover:via-orange-400 hover:to-red-400 border-2 border-yellow-400/50 shadow-lg shadow-orange-500/30 transition-all animate-pulse"
+              data-testid="expansion-shop-button"
+            >
+              <span className="text-xl">🏪</span>
+              <span>EXPANSION SHOP</span>
+              <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full ml-1">NEW!</span>
+            </button>
           </div>
           
           {/* Stats Banner */}
