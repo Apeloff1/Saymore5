@@ -892,8 +892,18 @@ function App() {
   const stageData = STAGES[store.currentStage];
   const tensionLevel = store.tension > 0.7 ? 'danger' : store.tension > 0.4 ? 'warning' : 'safe';
   
+  // Compute screen shake class
+  const gameContainerClass = useMemo(() => {
+    let classes = 'h-screen flex flex-col bg-black overflow-hidden';
+    if (screenShake) classes += ' screen-shake';
+    if (comboFlash) classes += ' combo-flash';
+    if (streakFire) classes += ' streak-fire';
+    if (rareCatchGlow) classes += ' rare-glow';
+    return classes;
+  }, [screenShake, comboFlash, streakFire, rareCatchGlow]);
+  
   return (
-    <div className="h-screen flex flex-col bg-black overflow-hidden" data-testid="game-screen">
+    <div className={gameContainerClass} data-testid="game-screen">
       <Toaster position="top-center" richColors />
       
       {/* Fish Catch Cutscene */}
@@ -904,6 +914,29 @@ function App() {
           points={cutsceneData.points}
           onComplete={handleCutsceneComplete}
         />
+      )}
+      
+      {/* Points Popup - Neuron Activation */}
+      {pointsPopup && (
+        <div 
+          className="fixed z-[200] pointer-events-none points-popup"
+          style={{ left: `${pointsPopup.x}%`, top: `${pointsPopup.y}%`, transform: 'translate(-50%, -50%)' }}
+        >
+          <div className={`text-4xl md:text-6xl font-bold font-pixel ${pointsPopup.perfect ? 'text-yellow-400 perfect-glow' : 'text-green-400'}`}>
+            +{pointsPopup.points}
+          </div>
+          {pointsPopup.perfect && <div className="text-center text-yellow-300 text-lg font-bold mt-1">PERFECT!</div>}
+        </div>
+      )}
+      
+      {/* Combo indicator overlay */}
+      {store.combo >= 3 && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[150] pointer-events-none">
+          <div className={`text-2xl md:text-3xl font-bold font-pixel combo-pulse ${store.combo >= 5 ? 'text-orange-400 on-fire' : 'text-yellow-400'}`}>
+            {store.combo}x COMBO!
+            {store.combo >= 5 && <span className="ml-2">🔥</span>}
+          </div>
+        </div>
       )}
       
       {/* Game Area - 70% */}
