@@ -450,147 +450,169 @@ export const AnimatedIsland = ({ season = 'summer', side = 'right' }) => {
 
   const swayAmount = Math.sin(palmSway) * 4;
   const isRight = side === 'right';
-  const bobAmount = Math.sin(waveOffset) * 2;
+  const bobAmount = Math.sin(waveOffset) * 3;
 
   return (
     <div 
-      className={`absolute ${isRight ? 'right-2' : 'left-2'}`} 
+      className={`absolute ${isRight ? 'right-4' : 'left-4'}`} 
       style={{ 
-        top: '8%',
+        bottom: '42%',
         transform: `${isRight ? 'scaleX(1)' : 'scaleX(-1)'} translateY(${bobAmount}px)`,
         transition: 'transform 0.3s ease',
+        zIndex: 15,
       }}
     >
-      <svg width="180" height="160" viewBox="0 0 180 160">
-        {/* Water reflection */}
-        <ellipse cx="90" cy="145" rx="75" ry="12" fill="#4A90D9" opacity="0.3" />
+      <svg width="160" height="140" viewBox="0 0 160 140">
+        {/* Water reflection under island */}
+        <ellipse cx="80" cy="130" rx="65" ry="10" fill="#4A90D9" opacity="0.25" />
+        <ellipse cx="80" cy="132" rx="55" ry="7" fill="#2E5A88" opacity="0.2" />
         
-        {/* Water waves around island */}
-        <path 
-          d={`M 20 140 Q 45 ${135 + Math.sin(waveOffset) * 3} 70 140 Q 95 ${145 + Math.sin(waveOffset + 1) * 3} 120 140 Q 145 ${135 + Math.sin(waveOffset + 2) * 3} 160 140`}
-          stroke="#87CEEB"
-          strokeWidth="3"
-          fill="none"
-          opacity="0.5"
+        {/* Water ripples around island base */}
+        <ellipse 
+          cx="80" 
+          cy="125" 
+          rx={60 + Math.sin(waveOffset) * 5} 
+          ry="8" 
+          stroke="#87CEEB" 
+          strokeWidth="1.5" 
+          fill="none" 
+          opacity={0.4 + Math.sin(waveOffset) * 0.2}
+        />
+        <ellipse 
+          cx="80" 
+          cy="127" 
+          rx={70 + Math.sin(waveOffset + 1) * 5} 
+          ry="10" 
+          stroke="#87CEEB" 
+          strokeWidth="1" 
+          fill="none" 
+          opacity={0.3 + Math.sin(waveOffset + 1) * 0.15}
         />
         
         {/* Island base - sand with gradient */}
-        <ellipse cx="90" cy="130" rx="70" ry="20" fill="url(#sandGradient)" />
-        <ellipse cx="90" cy="126" rx="60" ry="15" fill="#F4D03F" opacity="0.6" />
+        <ellipse cx="80" cy="115" rx="60" ry="18" fill="url(#sandGradient2)" />
+        <ellipse cx="80" cy="112" rx="50" ry="14" fill="#F4D03F" opacity="0.5" />
         
-        {/* Beach details - shells and rocks */}
-        <circle cx="50" cy="128" r="3" fill="#DEB887" opacity="0.7" />
-        <circle cx="120" cy="130" r="2" fill="#A0522D" opacity="0.6" />
-        <ellipse cx="75" cy="132" rx="4" ry="2" fill="#F5DEB3" opacity="0.5" />
-        <circle cx="105" cy="129" r="2.5" fill="#8B7355" opacity="0.5" />
+        {/* Beach details - shells, rocks, starfish */}
+        <circle cx="45" cy="113" r="2.5" fill="#DEB887" opacity="0.7" />
+        <circle cx="110" cy="115" r="2" fill="#A0522D" opacity="0.6" />
+        <ellipse cx="65" cy="117" rx="3" ry="1.5" fill="#F5DEB3" opacity="0.5" />
+        <circle cx="95" cy="114" r="2" fill="#8B7355" opacity="0.5" />
+        {/* Starfish */}
+        <path d="M 55 118 L 57 114 L 60 117 L 58 121 L 54 120 Z" fill="#FF6B6B" opacity="0.6" />
+        
+        {/* Small grass/plants */}
+        <path d="M 35 112 Q 33 105 36 108 Q 34 102 38 107" stroke="#228B22" strokeWidth="2" fill="none" opacity="0.6" />
+        <path d="M 120 113 Q 122 106 119 109 Q 121 103 117 108" stroke="#228B22" strokeWidth="2" fill="none" opacity="0.6" />
         
         {/* Main palm tree trunk with texture */}
         <path 
-          d={`M 90 125 Q ${87 + swayAmount * 0.3} 95 ${82 + swayAmount * 0.6} 55`} 
+          d={`M 80 110 Q ${77 + swayAmount * 0.3} 85 ${72 + swayAmount * 0.6} 50`} 
           stroke="#654321" 
-          strokeWidth="12" 
+          strokeWidth="10" 
           fill="none" 
           strokeLinecap="round" 
         />
         <path 
-          d={`M 90 125 Q ${87 + swayAmount * 0.3} 95 ${82 + swayAmount * 0.6} 55`} 
+          d={`M 80 110 Q ${77 + swayAmount * 0.3} 85 ${72 + swayAmount * 0.6} 50`} 
           stroke="#8B4513" 
-          strokeWidth="8" 
+          strokeWidth="7" 
           fill="none" 
           strokeLinecap="round" 
         />
-        {/* Trunk texture lines */}
-        {[0, 1, 2, 3, 4, 5].map(i => (
+        {/* Trunk texture rings */}
+        {[0, 1, 2, 3, 4].map(i => (
           <ellipse 
             key={i}
-            cx={88 + swayAmount * 0.1 * (6 - i) / 6 - i * 1}
-            cy={120 - i * 12}
-            rx={4 - i * 0.3}
-            ry={1.5}
+            cx={78 + swayAmount * 0.1 * (5 - i) / 5 - i * 1.5}
+            cy={105 - i * 12}
+            rx={3.5 - i * 0.2}
+            ry={1.2}
             fill="#5D4037"
-            opacity="0.4"
+            opacity="0.35"
           />
         ))}
         
-        {/* Palm leaves - more detailed */}
-        {[-70, -45, -20, 0, 20, 45, 70].map((angle, i) => {
+        {/* Palm leaves - detailed with shadows */}
+        {[-65, -40, -15, 10, 35, 60].map((angle, i) => {
           const leafSway = swayAmount * (1.2 + i * 0.08);
-          const leafLength = 55 - Math.abs(angle) * 0.3;
-          const baseX = 82 + swayAmount * 0.6;
-          const baseY = 55;
+          const leafLength = 50 - Math.abs(angle) * 0.25;
+          const baseX = 72 + swayAmount * 0.6;
+          const baseY = 50;
           
           return (
             <g key={i}>
               {/* Leaf shadow */}
               <path
                 d={`M ${baseX} ${baseY} 
-                    Q ${baseX + angle * 0.9 + leafSway} ${baseY - leafLength * 0.5} 
-                      ${baseX + angle * 1.4 + leafSway * 1.3} ${baseY - leafLength * 0.15 + Math.abs(angle) * 0.2}`}
-                stroke={season === 'winter' ? '#CCCCCC' : '#1B5E20'}
-                strokeWidth="10"
+                    Q ${baseX + angle * 0.85 + leafSway} ${baseY - leafLength * 0.45} 
+                      ${baseX + angle * 1.3 + leafSway * 1.3} ${baseY - leafLength * 0.1 + Math.abs(angle) * 0.15}`}
+                stroke={season === 'winter' ? '#AAAAAA' : '#1B5E20'}
+                strokeWidth="9"
                 fill="none"
                 strokeLinecap="round"
-                opacity="0.3"
+                opacity="0.25"
               />
               {/* Main leaf */}
               <path
                 d={`M ${baseX} ${baseY} 
-                    Q ${baseX + angle * 0.9 + leafSway} ${baseY - leafLength * 0.5} 
-                      ${baseX + angle * 1.4 + leafSway * 1.3} ${baseY - leafLength * 0.15 + Math.abs(angle) * 0.2}`}
-                stroke={season === 'winter' ? '#E8E8E8' : seasonData.treeColor === '#228B22' ? '#2E7D32' : seasonData.treeColor}
-                strokeWidth="7"
+                    Q ${baseX + angle * 0.85 + leafSway} ${baseY - leafLength * 0.45} 
+                      ${baseX + angle * 1.3 + leafSway * 1.3} ${baseY - leafLength * 0.1 + Math.abs(angle) * 0.15}`}
+                stroke={season === 'winter' ? '#E0E0E0' : '#2E7D32'}
+                strokeWidth="6"
                 fill="none"
                 strokeLinecap="round"
               />
-              {/* Leaf highlight */}
+              {/* Leaf vein/highlight */}
               <path
                 d={`M ${baseX} ${baseY} 
-                    Q ${baseX + angle * 0.85 + leafSway} ${baseY - leafLength * 0.45} 
-                      ${baseX + angle * 1.3 + leafSway * 1.2} ${baseY - leafLength * 0.1 + Math.abs(angle) * 0.2}`}
+                    Q ${baseX + angle * 0.8 + leafSway} ${baseY - leafLength * 0.4} 
+                      ${baseX + angle * 1.2 + leafSway * 1.2} ${baseY - leafLength * 0.08 + Math.abs(angle) * 0.15}`}
                 stroke={season === 'winter' ? '#FFFFFF' : '#4CAF50'}
                 strokeWidth="2"
                 fill="none"
                 strokeLinecap="round"
-                opacity="0.4"
+                opacity="0.5"
               />
             </g>
           );
         })}
         
-        {/* Coconuts with shadows */}
-        <circle cx={80 + swayAmount * 0.4} cy="58" r="5" fill="#5D4037" />
-        <circle cx={79 + swayAmount * 0.4} cy="57" r="4" fill="#6D4C41" />
-        <circle cx={77 + swayAmount * 0.4} cy="56" r="1.5" fill="#8D6E63" opacity="0.7" />
+        {/* Coconuts cluster */}
+        <circle cx={70 + swayAmount * 0.4} cy="53" r="4.5" fill="#4E342E" />
+        <circle cx={69 + swayAmount * 0.4} cy="52" r="3.5" fill="#5D4037" />
+        <circle cx={67 + swayAmount * 0.4} cy="51" r="1.2" fill="#8D6E63" opacity="0.7" />
         
-        <circle cx={85 + swayAmount * 0.4} cy="62" r="5" fill="#4E342E" />
-        <circle cx={84 + swayAmount * 0.4} cy="61" r="4" fill="#5D4037" />
-        <circle cx={82 + swayAmount * 0.4} cy="60" r="1.5" fill="#8D6E63" opacity="0.7" />
+        <circle cx={75 + swayAmount * 0.4} cy="56" r="4" fill="#3E2723" />
+        <circle cx={74 + swayAmount * 0.4} cy="55" r="3" fill="#4E342E" />
+        
+        <circle cx={66 + swayAmount * 0.4} cy="57" r="3.5" fill="#5D4037" />
         
         {/* Small palm tree */}
         <path 
-          d={`M 125 128 Q ${123 + swayAmount * 0.4} 108 ${120 + swayAmount * 0.3} 88`} 
+          d={`M 110 113 Q ${108 + swayAmount * 0.35} 98 ${105 + swayAmount * 0.25} 82`} 
           stroke="#654321" 
-          strokeWidth="6" 
+          strokeWidth="5" 
           fill="none" 
           strokeLinecap="round" 
         />
         <path 
-          d={`M 125 128 Q ${123 + swayAmount * 0.4} 108 ${120 + swayAmount * 0.3} 88`} 
+          d={`M 110 113 Q ${108 + swayAmount * 0.35} 98 ${105 + swayAmount * 0.25} 82`} 
           stroke="#8B4513" 
-          strokeWidth="4" 
+          strokeWidth="3.5" 
           fill="none" 
           strokeLinecap="round" 
         />
         
         {/* Small palm leaves */}
-        {[-50, -15, 20, 55].map((angle, i) => (
+        {[-45, -10, 25, 55].map((angle, i) => (
           <path
             key={`small-${i}`}
-            d={`M ${120 + swayAmount * 0.3} 88 
-                Q ${120 + angle * 0.5 + swayAmount * 0.5} ${78} 
-                  ${120 + angle * 0.9 + swayAmount * 0.7} ${84}`}
-            stroke={season === 'winter' ? '#E8E8E8' : '#2E7D32'}
-            strokeWidth="5"
+            d={`M ${105 + swayAmount * 0.25} 82 
+                Q ${105 + angle * 0.45 + swayAmount * 0.4} ${74} 
+                  ${105 + angle * 0.8 + swayAmount * 0.6} ${78}`}
+            stroke={season === 'winter' ? '#E0E0E0' : '#388E3C'}
+            strokeWidth="4"
             fill="none"
             strokeLinecap="round"
           />
@@ -599,25 +621,49 @@ export const AnimatedIsland = ({ season = 'summer', side = 'right' }) => {
         {/* Beach umbrella for summer */}
         {season === 'summer' && (
           <g>
-            <line x1="55" y1="125" x2="55" y2="100" stroke="#8B4513" strokeWidth="2" />
-            <path d="M 35 100 Q 55 85 75 100 Z" fill="#FF6B6B" />
-            <path d="M 40 100 Q 55 90 70 100" fill="#FFFFFF" opacity="0.3" />
+            <line x1="50" y1="112" x2="50" y2="92" stroke="#8B4513" strokeWidth="2" />
+            <path d="M 32 92 Q 50 78 68 92 Z" fill="#FF6B6B" />
+            <path d="M 36 92 Q 50 82 64 92" stroke="#FFFFFF" strokeWidth="2" fill="none" opacity="0.4" />
+            {/* Beach towel */}
+            <rect x="55" y="113" width="18" height="8" rx="1" fill="#4FC3F7" opacity="0.7" />
           </g>
         )}
         
         {/* Snow on island for winter */}
         {season === 'winter' && (
           <>
-            <ellipse cx="90" cy="122" rx="55" ry="12" fill="#FFFFFF" opacity="0.7" />
-            <ellipse cx="85" cy="118" rx="40" ry="8" fill="#F0F8FF" opacity="0.5" />
+            <ellipse cx="80" cy="108" rx="48" ry="10" fill="#FFFFFF" opacity="0.75" />
+            <ellipse cx="75" cy="105" rx="35" ry="7" fill="#F0F8FF" opacity="0.5" />
+            {/* Snow on palm leaves */}
+            <ellipse cx={72 + swayAmount * 0.6 - 40} cy="42" rx="8" ry="3" fill="#FFF" opacity="0.6" />
+            <ellipse cx={72 + swayAmount * 0.6 + 35} cy="45" rx="6" ry="2" fill="#FFF" opacity="0.5" />
+          </>
+        )}
+        
+        {/* Autumn leaves on ground */}
+        {season === 'autumn' && (
+          <>
+            <ellipse cx="60" cy="116" rx="3" ry="2" fill="#FF6347" opacity="0.6" />
+            <ellipse cx="95" cy="115" rx="2.5" ry="1.5" fill="#FF8C00" opacity="0.5" />
+            <ellipse cx="75" cy="118" rx="2" ry="1.5" fill="#DAA520" opacity="0.6" />
+          </>
+        )}
+        
+        {/* Spring flowers */}
+        {season === 'spring' && (
+          <>
+            <circle cx="45" cy="110" r="3" fill="#FF69B4" opacity="0.7" />
+            <circle cx="45" cy="110" r="1.5" fill="#FFD700" />
+            <circle cx="115" cy="111" r="2.5" fill="#FF69B4" opacity="0.6" />
+            <circle cx="115" cy="111" r="1.2" fill="#FFD700" />
           </>
         )}
         
         {/* Gradient definitions */}
         <defs>
-          <linearGradient id="sandGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id="sandGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#F4D03F" />
-            <stop offset="50%" stopColor="#DAA520" />
+            <stop offset="40%" stopColor="#DAA520" />
             <stop offset="100%" stopColor="#B8860B" />
           </linearGradient>
         </defs>
