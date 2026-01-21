@@ -882,6 +882,74 @@ export const PixelBobber = memo(({ isActive, wobble = false }) => (
   </svg>
 ));
 
+// ========== WATER RIPPLE EFFECT ==========
+export const WaterRipple = memo(({ x, y, active = true }) => {
+  const [ripples, setRipples] = useState([]);
+  
+  useEffect(() => {
+    if (!active) {
+      setRipples([]);
+      return;
+    }
+    
+    // Create new ripple every 1.5 seconds
+    const interval = setInterval(() => {
+      const newRipple = {
+        id: Date.now(),
+        startTime: Date.now(),
+      };
+      setRipples(prev => [...prev.slice(-3), newRipple]); // Keep max 4 ripples
+    }, 1500);
+    
+    // Initial ripple
+    setRipples([{ id: Date.now(), startTime: Date.now() }]);
+    
+    return () => clearInterval(interval);
+  }, [active]);
+  
+  if (!active || ripples.length === 0) return null;
+  
+  return (
+    <div className="absolute pointer-events-none" style={{ left: x - 60, top: y - 30 }}>
+      <svg width="120" height="60" viewBox="0 0 120 60">
+        {ripples.map((ripple) => {
+          const age = (Date.now() - ripple.startTime) / 1000;
+          const progress = Math.min(age / 2, 1);
+          const opacity = Math.max(0, 1 - progress);
+          
+          return (
+            <g key={ripple.id}>
+              {/* Multiple expanding rings */}
+              {[0, 0.2, 0.4].map((delay, i) => {
+                const ringProgress = Math.max(0, Math.min(1, (progress - delay) / 0.8));
+                const ringOpacity = Math.max(0, opacity - delay * 0.5) * (1 - ringProgress);
+                const radius = 5 + ringProgress * 50;
+                
+                return (
+                  <ellipse
+                    key={i}
+                    cx="60"
+                    cy="30"
+                    rx={radius}
+                    ry={radius * 0.4}
+                    fill="none"
+                    stroke="#4A90D9"
+                    strokeWidth={Math.max(0.5, 2 - ringProgress * 1.5)}
+                    opacity={ringOpacity * 0.6}
+                    style={{
+                      transition: 'all 0.1s linear',
+                    }}
+                  />
+                );
+              })}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+});
+
 export const WaterSplash = memo(({ x, y }) => (
   <div className="absolute pointer-events-none splash-anim" style={{ left: x - 45, top: y - 25 }}>
     <svg width="90" height="55">
