@@ -874,8 +874,8 @@ function App() {
       <div className="relative" style={{ height: '70%' }}>
         <RetroBackground stage={store.currentStage} timeOfDay={store.timeOfDay} showRain={stageData.features.rain} showLightning={store.showLightning} season={currentSeason} />
         
-        {/* Flying Birds */}
-        <FlyingBirds count={store.currentStage === 0 ? 5 : 3} direction={store.currentStage % 2 === 0 ? 'right' : 'left'} />
+        {/* Flying Seagulls */}
+        <FlyingSeagulls count={store.currentStage === 0 ? 7 : 4} direction={store.currentStage % 2 === 0 ? 'right' : 'left'} />
         
         {/* Island - Better positioned */}
         <AnimatedIsland season={currentSeason} side="right" />
