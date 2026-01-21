@@ -1073,11 +1073,11 @@ function App() {
           </div>
           
           {/* Center: Cast/Reel Buttons */}
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-2">
             <button 
               onClick={handleCast} 
               disabled={store.fishingState !== 'idle'} 
-              className="btn-cast w-28 h-28 rounded-full font-bold text-2xl text-white font-pixel" 
+              className="btn-cast w-24 h-24 md:w-28 md:h-28 rounded-full font-bold text-base md:text-lg text-white font-pixel btn-smooth" 
               data-testid="cast-button"
             >
               {store.fishingState === 'idle' ? 'CAST' : store.fishingState === 'waiting' ? '...' : store.fishingState.toUpperCase()}
@@ -1086,7 +1086,7 @@ function App() {
             {store.fishingState === 'bite' && (
               <button 
                 onClick={handleReel} 
-                className="btn-reel w-28 h-14 rounded-xl font-bold text-white text-lg animate-pulse" 
+                className="btn-reel w-24 h-12 md:w-28 md:h-14 rounded-xl font-bold text-white text-sm md:text-base animate-pulse btn-smooth" 
                 data-testid="reel-button"
               >
                 🎣 REEL!
