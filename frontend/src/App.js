@@ -19,6 +19,7 @@ import {
   AnimatedBoats,
 } from './components/GameSprites';
 import FishCatchCutscene from './components/FishCatchCutscene';
+import ExpansionShop from './components/ExpansionShop';
 import { toast, Toaster } from 'sonner';
 import './App.css';
 
