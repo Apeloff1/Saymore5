@@ -514,18 +514,18 @@ const EnhancedWater = memo(({ stage, season }) => {
   );
 });
 
-// ========== OPTIMIZED SEASONAL PARTICLES (CSS-based) ==========
+// ========== OPTIMIZED SEASONAL PARTICLES (CSS-based, proportionate) ==========
 const SeasonalParticles = memo(({ season, count = 15 }) => {
   const particles = useMemo(() => {
     return Array.from({ length: count }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
-      size: 8 + Math.random() * 10,
-      duration: 8 + Math.random() * 6,
+      size: season === 'winter' ? 3 + Math.random() * 4 : 8 + Math.random() * 10, // Smaller snowflakes
+      duration: season === 'winter' ? 6 + Math.random() * 4 : 8 + Math.random() * 6,
       delay: Math.random() * 8,
-      swayAmount: 15 + Math.random() * 20,
+      swayAmount: season === 'winter' ? 8 + Math.random() * 12 : 15 + Math.random() * 20,
     }));
-  }, [count]);
+  }, [count, season]);
 
   const particleClass = {
     spring: 'particle-petal',
@@ -572,11 +572,12 @@ const SeasonalParticles = memo(({ season, count = 15 }) => {
           )}
           {season === 'winter' && (
             <div 
-              className="rounded-full bg-white"
+              className="rounded-full snowflake-shimmer"
               style={{ 
-                width: p.size * 0.6, 
-                height: p.size * 0.6,
-                boxShadow: '0 0 4px rgba(255,255,255,0.5)',
+                width: p.size, 
+                height: p.size,
+                background: 'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(220,240,255,0.7) 50%, rgba(200,230,255,0.4) 100%)',
+                boxShadow: `0 0 ${p.size}px rgba(255,255,255,0.5)`,
               }}
             />
           )}
