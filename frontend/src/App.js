@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useGameStore } from './store/gameStore';
 import { apiService } from './lib/api';
 import { retroSounds } from './lib/audioManager';
